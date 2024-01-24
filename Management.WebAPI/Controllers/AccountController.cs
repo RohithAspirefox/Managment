@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Web;
 using Management.Common;
+using Management.Common.Models.DTO;
+using Management.Common.Models.Entity;
 namespace Management.WebAPI.Controllers
 {
     [Route("api/[controller]")]
@@ -15,7 +17,7 @@ namespace Management.WebAPI.Controllers
         private readonly IEmailService _emailService;
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
-        private readonly ILogger<AccountController> _logger;
+        private readonly ILogger _logger;
         private readonly IConfiguration _configuration;
         private readonly IWebHostEnvironment _hostingEnvironment;
 
@@ -96,7 +98,7 @@ namespace Management.WebAPI.Controllers
                 var callbackUrl = $"{frontEndResetPasswordUrl}{encodedToken}&email={user.Email}";
                 var content = await System.IO.File.ReadAllTextAsync(Path.Combine(_hostingEnvironment.ContentRootPath, "EmailTemplate.html"));
                 content = content.Replace("{ResetPasswordRoute}", callbackUrl);
-                var message = new Message(user.Email, Constants.ResetPassword, content);
+                Message message = new Message(user.Email, Constants.ResetPassword, content);
                 await _emailService.SendEmailAsync(message);
                 return Ok(new BaseResponse
                 {

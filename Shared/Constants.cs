@@ -22,7 +22,7 @@ namespace Management.Common
         public static string DontExist = "User Doesn't Exist!";
         public static string ResetPassword = "Reset password";
         public static string SuccessfullySet = "We're happy to inform you that your password has been changed. Please use your new credentials to log in.";
-
+        public static string Created= "SuccessFully Created";
         #endregion Constants
     }
 }

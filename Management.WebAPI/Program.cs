@@ -1,5 +1,6 @@
 using AutoMapper;
 using Management.Common.Models;
+using Management.Common.Models.Entity;
 using Management.Data.AppDbContext;
 using Management.Data.AutoMapper;
 using Management.Services.Interfaces;
@@ -21,10 +22,8 @@ namespace Management.WebAPI
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
 
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
@@ -44,13 +43,11 @@ namespace Management.WebAPI
             // DB services
             builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-            //Identity Services
-            //builder.Services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
-
-            // Adding repo dependencies
-
             builder.Services.AddScoped<IAccountRepository, AccountRepository>();
-           
+
+            builder.Services.AddScoped<IProjectService, ProjectService>();
+            
+
             builder.Services.AddAutoMapper(typeof(Mapper));
 
             var emailConfig = builder.Configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>();
@@ -58,6 +55,7 @@ namespace Management.WebAPI
             builder.Services.AddSingleton<EmailConfiguration>(emailConfig);
 
             builder.Services.AddScoped<IEmailService, EmailService>();
+            
 
             builder.Services.AddControllers();
 
@@ -116,7 +114,6 @@ namespace Management.WebAPI
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
@@ -126,6 +123,7 @@ namespace Management.WebAPI
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseAuthorization();
+            app.UseStaticFiles();
 
             app.MapControllers();
 

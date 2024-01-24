@@ -1,4 +1,6 @@
-﻿using Management.Services.Interfaces;
+﻿using Management.Common.Models.DTO;
+using Management.Services.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
@@ -19,6 +21,7 @@ namespace Management.Services.Services
         }
 
         public async Task<T?> GetAsync<T>(string endpoint, Dictionary<string, string> headers = null, string token = null)
+        
         {
             AddHeaders(headers, token);
 
@@ -28,18 +31,36 @@ namespace Management.Services.Services
             }
         }
 
-        public async Task<T?> PostAsync<T>(string endpoint, object body, Dictionary<string, string> headers = null, string token = null)
+        public async Task<T?> PostAsync<T>(string endpoint,MultipartFormDataContent body, Dictionary<string, string> headers = null, string token = null)
         {
             AddHeaders(headers, token);
 
-            var requestBodyString = JsonConvert.SerializeObject(body);
+            using (HttpResponseMessage res = await _httpClient.PostAsync(endpoint, body))
+            {
+                return await ProcessResponse<T>(res);
+            }
+        }
+        public async Task<T?> PostAsyncData<T>(string endpoint, object body, Dictionary<string, string> headers = null, string token = null)
+        {
+            AddHeaders(headers, token);
+            var requestBodyString = JsonConvert.SerializeObject( body );
             var httpContent = new StringContent(requestBodyString, Encoding.UTF8, "application/json");
-
             using (HttpResponseMessage res = await _httpClient.PostAsync(endpoint, httpContent))
             {
                 return await ProcessResponse<T>(res);
             }
         }
+        public async Task<T?> PostAsyncUpdateDeleteData<T>(string endpoint, object body, Dictionary<string, string> headers = null, string token = null)
+        {
+            AddHeaders(headers, token);
+            var requestBodyString = JsonConvert.SerializeObject(new { id = body });
+            var httpContent = new StringContent(requestBodyString, Encoding.UTF8, "application/json");
+            using (HttpResponseMessage res = await _httpClient.PostAsync(endpoint, httpContent))
+            {
+                return await ProcessResponse<T>(res);
+            }
+        }
+
 
         public async Task<T?> DeleteAsync<T>(string endpoint, Dictionary<string, string> headers = null, string token = null)
         {
@@ -61,7 +82,6 @@ namespace Management.Services.Services
                 }
             }
 
-            // Add Bearer Token if available
             var bearerToken = token ?? string.Empty;
             if (!string.IsNullOrEmpty(bearerToken))
             {
@@ -100,6 +120,13 @@ namespace Management.Services.Services
             catch (Exception ex)
             {
                 return false;
+            }
+        }
+        public async Task<List<ProjectDto>> SearchData(string endpoint)
+        {
+            using (HttpResponseMessage res = await _httpClient.GetAsync(endpoint))
+            {
+                return await ProcessResponse<List<ProjectDto>>(res);
             }
         }
     }

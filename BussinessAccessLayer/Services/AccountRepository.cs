@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Management.Common.Models;
+using Management.Common.Models.DTO;
 using Management.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;

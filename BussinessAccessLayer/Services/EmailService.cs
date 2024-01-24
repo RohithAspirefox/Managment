@@ -1,7 +1,8 @@
-﻿using Management.Common.Models;
+﻿using Management.Common.Models.Entity;
 using Management.Services.Interfaces;
 using Microsoft.Extensions.Configuration;
 using MimeKit;
+using Management.Common.Models;
 
 namespace Management.Services.Services
 {

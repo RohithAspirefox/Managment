@@ -2,9 +2,11 @@
 using Management.Common.Enum;
 using Management.Common.Models;
 using Management.Common.Models.ApiResponse;
+using Management.Common.Models.DTO;
 using Management.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
 using System.IdentityModel.Tokens.Jwt;
@@ -12,7 +14,7 @@ using System.Security.Claims;
 
 namespace Management.Controllers
 {
-    [Route("[controller]/[action]")]
+
     public class AccountController : Controller
     {
         public IApiHelperService _apiHelperService;
@@ -40,7 +42,7 @@ namespace Management.Controllers
         {
             try
             {
-                var result = await _apiHelperService.PostAsync<LoginResponse>(ApiRoute.Login, model);
+                var result = await _apiHelperService.PostAsyncData<LoginResponse>(ApiRoute.Login, model);
                 if (result != null && result.Success)
                 {
                     var role = await GetRole(result.Token);
@@ -73,7 +75,7 @@ namespace Management.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var result = await _apiHelperService.PostAsync<BaseResponse>(ApiRoute.SignUp, model);
+                    var result = await _apiHelperService.PostAsyncData<BaseResponse>(ApiRoute.SignUp, model);
                     if (result.Success)
                     {
                         return RedirectToAction("Login", "Account");
@@ -111,8 +113,8 @@ namespace Management.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var result = await _apiHelperService.PostAsync<BaseResponse>(ApiRoute.ForgetPassword, forgotPasswordModel);
-                    if (result.Success)                    
+                    var result = await _apiHelperService.PostAsyncData<BaseResponse>(ApiRoute.ForgetPassword, forgotPasswordModel);
+                    if (result.Success)
                         return RedirectToAction("ForgotPasswordConfirmation", "Account");
                     ModelState.AddModelError(Constants.Empty, result.Error ?? Constants.ErrorMessage);
                 }
@@ -142,8 +144,8 @@ namespace Management.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var result = await _apiHelperService.PostAsync<BaseResponse>(ApiRoute.ResetPassword, resetPasswordDto);
-                    if (result.Success && result!=null)
+                    var result = await _apiHelperService.PostAsyncData<BaseResponse>(ApiRoute.ResetPassword, resetPasswordDto);
+                    if (result.Success && result != null)
                         return RedirectToAction("Login", "Account");
                     ModelState.AddModelError(Constants.Empty, result.Message ?? Constants.ErrorMessage);
                 }

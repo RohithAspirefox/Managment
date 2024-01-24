@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -7,7 +8,7 @@
 namespace Management.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class Init : Migration
+    public partial class First : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -51,6 +52,39 @@ namespace Management.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Projects",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DevelopmentName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DevelopmentUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    StageName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    StageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ProductionName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ProductionUrl = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Projects", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TechStack",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TechStackName = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TechStack", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -159,11 +193,58 @@ namespace Management.Data.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Document",
+                columns: table => new
+                {
+                    DocumentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    FileName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FilePath = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DocumentType = table.Column<int>(type: "int", nullable: false),
+                    ProjectEntityId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Document", x => x.DocumentId);
+                    table.ForeignKey(
+                        name: "FK_Document_Projects_ProjectEntityId",
+                        column: x => x.ProjectEntityId,
+                        principalTable: "Projects",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ProjectTechStack",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ProjectEntityId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TechStackId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProjectTechStack", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ProjectTechStack_Projects_ProjectEntityId",
+                        column: x => x.ProjectEntityId,
+                        principalTable: "Projects",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ProjectTechStack_TechStack_TechStackId",
+                        column: x => x.TechStackId,
+                        principalTable: "TechStack",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
+                    { "123013f0-5201-4317-abd8-c211f91b7123", "3", "User", "User" },
                     { "c7b013f0-5201-4317-abd8-c211f91b7330", "2", "HR", "Human Resource" },
                     { "fab4fac1-c546-41de-aebc-a14da6895711", "1", "Admin", "Admin" }
                 });
@@ -173,8 +254,9 @@ namespace Management.Data.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { "554a8f54-c054-4de6-9654-654321098765", 0, "f8d07b03-34e0-4468-89a1-62f41c2af22d", "hr@gmail.com", false, "HR", null, false, null, "hr@gmail.com", "HR", "AQAAAAIAAYagAAAAEETZaCByV2cW6ewdBHIf5cD2LZvnF97vlF8jYrDa+2i8LUbJzwCl41ncenjnRMquIw==", "9876543210", false, "58fb3d3b-d63b-4a03-9252-6219e158ba76", false, "HR" },
-                    { "b74ddd14-6340-4840-95c2-db12554843e5", 0, "c269b1d2-f3f1-4179-afff-7184494095f9", "admin@gmail.com", false, "Admin", null, false, null, "admin@gmail.com", "Admin", "AQAAAAIAAYagAAAAEOCPfoBfSaPhQX3yKkFV/n/U7TRBJ48a4sXr3a0HlFo1hp/SzuzOf1/mcAiupHiERA==", "1234567890", false, "50f8cde5-ec20-435b-ad20-ecd6c22518ff", false, "Admin" }
+                    { "554a8f54-c054-4de6-9654-654321098765", 0, "bba0a764-ed5c-4414-99ba-fdd6d0f4395c", "hr@gmail.com", false, "HR", null, false, null, "hr@gmail.com", "HR", "AQAAAAIAAYagAAAAEK6EGINuUHRK5shdfY0WYCiy2g4eTPhOz0QnVSxF8Ly4gKcSjt3g1fdb5RREuNKC5Q==", "9876543210", false, "bcb7e3e7-3fc4-4b71-82b0-62d0171033e4", false, "HR" },
+                    { "774a8f54-c054-4de6-9654-654321098755", 0, "8e451528-0d55-434e-bdc0-febf34a175b4", "user@gmail.com", false, "User", null, false, null, "user@gmail.com", "User", "AQAAAAIAAYagAAAAEA3K5/q6EquyKuvW9vR1B5ILZvw9HHWCmjjABghfhGH5OUGyjqnaDK4s0mF8xurnWw==", "987452361", false, "ace9d439-c654-4529-9a71-dceb54b29ff1", false, "User" },
+                    { "b74ddd14-6340-4840-95c2-db12554843e5", 0, "371630cd-0d9b-42d9-863d-35ea2b1f0908", "admin@gmail.com", false, "Admin", null, false, null, "admin@gmail.com", "Admin", "AQAAAAIAAYagAAAAEMVlfwLL8LbmU0yH1g3Bm8O/30LgIo1MriqCyelevNnOAsbS5U/0d8vWpSS9gDK02g==", "1234567890", false, "c82ceaaa-0b4f-4526-86ef-4c8259d327a6", false, "Admin" }
                 });
 
             migrationBuilder.InsertData(
@@ -183,6 +265,7 @@ namespace Management.Data.Migrations
                 values: new object[,]
                 {
                     { "c7b013f0-5201-4317-abd8-c211f91b7330", "554a8f54-c054-4de6-9654-654321098765" },
+                    { "123013f0-5201-4317-abd8-c211f91b7123", "774a8f54-c054-4de6-9654-654321098755" },
                     { "fab4fac1-c546-41de-aebc-a14da6895711", "b74ddd14-6340-4840-95c2-db12554843e5" }
                 });
 
@@ -224,6 +307,21 @@ namespace Management.Data.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Document_ProjectEntityId",
+                table: "Document",
+                column: "ProjectEntityId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProjectTechStack_ProjectEntityId",
+                table: "ProjectTechStack",
+                column: "ProjectEntityId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProjectTechStack_TechStackId",
+                table: "ProjectTechStack",
+                column: "TechStackId");
         }
 
         /// <inheritdoc />
@@ -245,10 +343,22 @@ namespace Management.Data.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "Document");
+
+            migrationBuilder.DropTable(
+                name: "ProjectTechStack");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Projects");
+
+            migrationBuilder.DropTable(
+                name: "TechStack");
         }
     }
 }

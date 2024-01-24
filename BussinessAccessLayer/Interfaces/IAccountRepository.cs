@@ -1,4 +1,5 @@
 ﻿using Management.Common.Models;
+using Management.Common.Models.DTO;
 
 namespace Management.Services.Interfaces
 {
@@ -8,7 +9,7 @@ namespace Management.Services.Interfaces
 
         Task<bool> SignUpUserAsync(SignUpDto UserDto);
 
-        Task<bool> LoginUserAsync(LoginModelDto loginDto);
+        Task<bool> LoginUserAsync(LoginModelDto UserLogin);
 
         Task<string> CreateTokenAsync(string Email);
     }

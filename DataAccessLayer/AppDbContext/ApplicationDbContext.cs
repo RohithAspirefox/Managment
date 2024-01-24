@@ -1,4 +1,5 @@
 ﻿using Management.Common.Models;
+using Management.Common.Models.Entity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +15,10 @@ namespace Management.Data.AppDbContext
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
         }
+        public DbSet<ProjectEntity> Projects { get; set; }
+        public DbSet<TechStack> TechStack { get; set; }
+        public DbSet<ProjectTechStack> ProjectTechStack { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

@@ -1,0 +1,141 @@
+﻿@using Management.Common.Enum;
+@model Management.Common.Models.DTO.ProjectDto;
+@{
+    ViewBag.Statuses = new SelectList(Enum.GetValues(typeof(Status)));
+}
+@{
+    Layout = "_accountLayout";
+}
+@{
+    var techStackNames = ViewBag.TechStackNames as List<SelectListItem> ?? new List<SelectListItem>();
+    var selectedTechStackNames = ViewBag.SelectedTechStackNames as List<SelectListItem> ?? new List<SelectListItem>();
+    var logoUrl = ViewBag.Logo;
+
+    var documentation = ViewBag.Documentation;
+    var snapShootUrl = ViewBag.SnapShoot;
+
+}
+<head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@2.0.1/dist/css/multi-select-tag.css">
+
+</head>
+
+<style>
+    .bootstrap-tagsinput {
+        min-height: 100px;
+    }
+</style>
+
+<h1>Update Project here</h1>
+
+<form asp-action="UpdateProject" method="post" enctype="multipart/form-data">
+    <div class="form-group">
+        <label asp-for="Logo"></label>
+        <br />
+        <input class="btn btn-secondary" value="ViewBag.Logo" type="file" asp-for="Logo" />
+        @if (ViewBag.Logo != null)
+        {
+            <p>Selected Logo: <a href="@ViewBag.Logo" target="_blank">@ViewBag.Logo</a></p>
+        }
+        <input hidden type="text" asp-for="ProjectId" />
+
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Name"></label>
+        <input asp-for="Name" class="form-control" value="@Model.Name" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="StartDate"></label>
+        <input type="date" asp-for="StartDate" class="form-control" value="@Model.StartDate.ToString("yyyy-MM-dd")" />
+        <span asp-validation-for="StartDate" class="text-danger"></span>
+    </div>
+
+    <label asp-for="Status "></label>
+    @Html.DropDownList("Statuses", null, Model.Status.ToString(), htmlAttributes: new { @class = "form-control" })
+
+    <div class="form-group">
+        <label asp-for="Description "></label>
+        <input asp-for="Description " class="form-control" value="@Model.Description" />
+        <span asp-validation-for="Description " class="text-danger"></span>
+    </div>
+
+    <label asp-for="TechStackUsed">TechStackUsed</label>
+    <select asp-for="TechStackUsed" asp-items="@ViewBag.TechStackNames"  class="form-control" id="TechStackUsed" multiple>
+    @foreach (var item in ViewBag.TechStackNames)
+    {
+        <option value="@item.Value" selected="@(Model.TechStackUsedObj.Any(x => x.Id.ToString() == item.Value))">
+            @item.Text
+        </option>
+    }
+    </select>
+
+    <div class="form-group">
+        <label asp-for="Documentation"></label>
+        <br />
+        <input class="btn btn-secondary" type="file" asp-for="Documentation" />
+        @if (ViewBag.Documentation != null)
+        {
+            <p>Selected Documentation: <a href="@ViewBag.Documentation" target="_blank">@ViewBag.Documentation</a></p>
+        }
+    </div>
+
+    <div class="form-group">
+        <label asp-for="SnapShoots"></label>
+        <br />
+        <input class="btn btn-secondary" type="file" asp-for="SnapShoots" multiple />
+        @if (ViewBag.SnapShoot != null)
+        {
+            foreach (var item in ViewBag.SnapShoot)
+            {
+                <p>Selected SnapShoot: <a href="@item" target="_blank">@item</a></p>
+            }
+        }
+    </div>
+
+    <div class="form-group">
+        <label asp-for="DevelopmentName  "></label>
+        <input asp-for="DevelopmentName  " class="form-control" value="@Model.DevelopmentName" />
+        <span asp-validation-for="DevelopmentName  " class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="DevelopmentUrl  "></label>
+        <input asp-for="DevelopmentUrl  " class="form-control" value="@Model.DevelopmentUrl" />
+        <span asp-validation-for="DevelopmentUrl  " class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="StageName  "></label>
+        <input asp-for="StageName  " class="form-control" value="@Model.StageName" />
+        <span asp-validation-for="StageName  " class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="StageUrl   "></label>
+        <input asp-for="StageUrl   " class="form-control" value="@Model.StageUrl" />
+        <span asp-validation-for="StageUrl   " class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="ProductionName   "></label>
+        <input asp-for="ProductionName   " class="form-control" value="@Model.ProductionName" />
+        <span asp-validation-for="ProductionName   " class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="ProductionUrl   "></label>
+        <input asp-for="ProductionUrl   " class="form-control" value="@Model.ProductionUrl" />
+        <span asp-validation-for="ProductionUrl   " class="text-danger"></span>
+    </div>
+    <br />
+    <button type="submit" class="btn btn-primary">Update</button>
+</form>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="../../assets/vendor/bootstrap-tagsinput/js/bootstrap-tagsinput.min.js"></script>
+@* <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation-unobtrusive@3.2.12/dist/jquery.validate.unobtrusive.min.js"></script> *@
+<script src="../js/bootstrap-tagsinput.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@2.0.1/dist/js/multi-select-tag.js"></script>
+<script>
+    new MultiSelectTag('TechStackUsed')
+
+</script>

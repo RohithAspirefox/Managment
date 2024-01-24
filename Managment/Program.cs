@@ -1,4 +1,5 @@
 using Management.Common.Models;
+using Management.Common.Models.Entity;
 using Management.Services.Interfaces;
 using Management.Services.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -21,6 +22,14 @@ namespace Management
             var emailConfig = builder.Configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>();
 
             builder.Services.AddSingleton<EmailConfiguration>(emailConfig);
+
+            builder.Services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30); // Adjust as needed
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
+
 
             builder.Services.AddTransient<IApiHelperService, ApiHelperService>();
 
@@ -54,8 +63,8 @@ namespace Management
             app.UseSession();
 
             app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+            name: "default",
+            pattern: "{controller=Account}/{action=Login}/{id?}");
 
 
             app.Run();

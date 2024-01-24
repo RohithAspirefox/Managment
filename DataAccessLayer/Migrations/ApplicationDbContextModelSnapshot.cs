@@ -17,10 +17,116 @@ namespace Management.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.0")
+                .HasAnnotation("ProductVersion", "8.0.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("Management.Common.Models.Entity.Document", b =>
+                {
+                    b.Property<Guid>("DocumentId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("DocumentType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FilePath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("ProjectEntityId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("DocumentId");
+
+                    b.HasIndex("ProjectEntityId");
+
+                    b.ToTable("Document");
+                });
+
+            modelBuilder.Entity("Management.Common.Models.Entity.ProjectEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DevelopmentName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DevelopmentUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProductionName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProductionUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StageName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StageUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Projects");
+                });
+
+            modelBuilder.Entity("Management.Common.Models.Entity.ProjectTechStack", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ProjectEntityId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TechStackId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProjectEntityId");
+
+                    b.HasIndex("TechStackId");
+
+                    b.ToTable("ProjectTechStack");
+                });
+
+            modelBuilder.Entity("Management.Common.Models.Entity.TechStack", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("TechStackName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TechStack");
+                });
 
             modelBuilder.Entity("Management.Common.Models.User", b =>
                 {
@@ -97,17 +203,17 @@ namespace Management.Data.Migrations
                         {
                             Id = "b74ddd14-6340-4840-95c2-db12554843e5",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "e90bfb8e-913e-4f18-bc3d-a144833a00a5",
+                            ConcurrencyStamp = "371630cd-0d9b-42d9-863d-35ea2b1f0908",
                             Email = "admin@gmail.com",
                             EmailConfirmed = false,
                             FirstName = "Admin",
                             LockoutEnabled = false,
                             NormalizedEmail = "admin@gmail.com",
                             NormalizedUserName = "Admin",
-                            PasswordHash = "AQAAAAIAAYagAAAAEDhZI7IgmdVPzDyM/XAcLtGnFhHKbwaOj4u3JKdZRlJf2tYAviZvAz75lCyGN3BuAQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEMVlfwLL8LbmU0yH1g3Bm8O/30LgIo1MriqCyelevNnOAsbS5U/0d8vWpSS9gDK02g==",
                             PhoneNumber = "1234567890",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "6f67ee68-a9e8-47cd-9404-fb016604cda1",
+                            SecurityStamp = "c82ceaaa-0b4f-4526-86ef-4c8259d327a6",
                             TwoFactorEnabled = false,
                             UserName = "Admin"
                         },
@@ -115,17 +221,17 @@ namespace Management.Data.Migrations
                         {
                             Id = "554a8f54-c054-4de6-9654-654321098765",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "9402a057-dce3-4846-803e-1b115d7128c1",
+                            ConcurrencyStamp = "bba0a764-ed5c-4414-99ba-fdd6d0f4395c",
                             Email = "hr@gmail.com",
                             EmailConfirmed = false,
                             FirstName = "HR",
                             LockoutEnabled = false,
                             NormalizedEmail = "hr@gmail.com",
                             NormalizedUserName = "HR",
-                            PasswordHash = "AQAAAAIAAYagAAAAEOP3CyZVzaZv+sHN2z3pNfC6yLHRFlfU/jfogJ/E1oGgwGKUtvNcYU6TZ1qSUCGSFw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEK6EGINuUHRK5shdfY0WYCiy2g4eTPhOz0QnVSxF8Ly4gKcSjt3g1fdb5RREuNKC5Q==",
                             PhoneNumber = "9876543210",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "143b2c61-3020-45df-bf41-d8ce058d09b8",
+                            SecurityStamp = "bcb7e3e7-3fc4-4b71-82b0-62d0171033e4",
                             TwoFactorEnabled = false,
                             UserName = "HR"
                         },
@@ -133,17 +239,17 @@ namespace Management.Data.Migrations
                         {
                             Id = "774a8f54-c054-4de6-9654-654321098755",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "9733440a-2a9b-4948-9215-9814781f79d9",
+                            ConcurrencyStamp = "8e451528-0d55-434e-bdc0-febf34a175b4",
                             Email = "user@gmail.com",
                             EmailConfirmed = false,
                             FirstName = "User",
                             LockoutEnabled = false,
                             NormalizedEmail = "user@gmail.com",
                             NormalizedUserName = "User",
-                            PasswordHash = "AQAAAAIAAYagAAAAEMiz7a3rWl38q3aGH5sabiRhF1WZuU98DPwZcs3qoZs8JNP2Aa7IRu4RW+D89dAUBA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEA3K5/q6EquyKuvW9vR1B5ILZvw9HHWCmjjABghfhGH5OUGyjqnaDK4s0mF8xurnWw==",
                             PhoneNumber = "987452361",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "a9b682c3-6efc-4042-b69e-81118758ab62",
+                            SecurityStamp = "ace9d439-c654-4529-9a71-dceb54b29ff1",
                             TwoFactorEnabled = false,
                             UserName = "User"
                         });
@@ -322,6 +428,36 @@ namespace Management.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Management.Common.Models.Entity.Document", b =>
+                {
+                    b.HasOne("Management.Common.Models.Entity.ProjectEntity", "ProjectEntity")
+                        .WithMany("Documents")
+                        .HasForeignKey("ProjectEntityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ProjectEntity");
+                });
+
+            modelBuilder.Entity("Management.Common.Models.Entity.ProjectTechStack", b =>
+                {
+                    b.HasOne("Management.Common.Models.Entity.ProjectEntity", "ProjectEntity")
+                        .WithMany("TechStackUsed")
+                        .HasForeignKey("ProjectEntityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Management.Common.Models.Entity.TechStack", "TechStack")
+                        .WithMany("ProjectTechStacks")
+                        .HasForeignKey("TechStackId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ProjectEntity");
+
+                    b.Navigation("TechStack");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -371,6 +507,18 @@ namespace Management.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Management.Common.Models.Entity.ProjectEntity", b =>
+                {
+                    b.Navigation("Documents");
+
+                    b.Navigation("TechStackUsed");
+                });
+
+            modelBuilder.Entity("Management.Common.Models.Entity.TechStack", b =>
+                {
+                    b.Navigation("ProjectTechStacks");
                 });
 #pragma warning restore 612, 618
         }
