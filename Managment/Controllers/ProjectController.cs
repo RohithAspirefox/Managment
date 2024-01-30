@@ -50,9 +50,6 @@ namespace Management.Controllers
             }
 
             var allResults = await _apiHelperService.GetAsync<List<ProjectDto>>(ApiRoute.GetAllProject);
-            //allResults.ForEach(x => x.TechStackUsed = x.TechStackUsedObj.Select(x => x.Id).ToList());
-
-            //int totalPages = (int)Math.Ceiling((double)allResults.Count / pageSize);
             int totalPages;
             if (page == null)
             {
@@ -77,46 +74,55 @@ namespace Management.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddProject(ProjectDto project)
+        public async Task<IActionResult> AddProject([FromForm] ProjectDto project)
         {
             if (!ModelState.IsValid)
             {
                 return RedirectToAction("Add");
             }
 
-            var content = new MultipartFormDataContent();
-            content.Add(new StringContent(project.ProjectId.ToString()), "ProjectId");
-            content.Add(new StringContent(project.Status.ToString()), "Status");
-            content.Add(new StringContent(project.Name), "Name");
-            content.Add(new StringContent(project.StartDate.ToString()), "StartDate");
-            content.Add(new StringContent(project.Description.ToString()), "Description");
-            content.Add(new StringContent(project.DevelopmentName.ToString()), "DevelopmentName");
-            content.Add(new StringContent(project.DevelopmentUrl.ToString()), "DevelopmentUrl");
-            content.Add(new StringContent(project.StageName.ToString()), "StageName");
-            content.Add(new StringContent(project.ProductionName.ToString()), "ProductionName");
-            content.Add(new StringContent(project.StageUrl.ToString()), "StageUrl");
-            content.Add(new StringContent(project.ProductionUrl.ToString()), "ProductionUrl");
-
-            foreach (var guid in project.TechStackUsed)
+            try
             {
-                content.Add(new StringContent(guid.ToString()), "TechStackUsed");
+                var content = new MultipartFormDataContent();
+                content.Add(new StringContent(project.ProjectId.ToString()), "ProjectId");
+                content.Add(new StringContent(project.Status.ToString()), "Status");
+                content.Add(new StringContent(project.Name), "Name");
+                content.Add(new StringContent(project.StartDate.ToString()), "StartDate");
+                content.Add(new StringContent(project.Description.ToString()), "Description");
+                content.Add(new StringContent(project.DevelopmentName.ToString()), "DevelopmentName");
+                content.Add(new StringContent(project.DevelopmentUrl.ToString()), "DevelopmentUrl");
+                content.Add(new StringContent(project.StageName.ToString()), "StageName");
+                content.Add(new StringContent(project.ProductionName.ToString()), "ProductionName");
+                content.Add(new StringContent(project.StageUrl.ToString()), "StageUrl");
+                content.Add(new StringContent(project.ProductionUrl.ToString()), "ProductionUrl");
+
+
+                foreach (var techStackItem in project.TechStackUsed)
+                {
+                    content.Add(new StringContent(techStackItem), "TechStackUsed");
+                }
+
+                content.Add(new StreamContent(project.Logo.OpenReadStream()), "Logo", project.Logo.FileName);
+
+                content.Add(new StreamContent(project.Documentation.OpenReadStream()), "Documentation", project.Documentation.FileName);
+
+                foreach (var snapshot in project.SnapShoots)
+                {
+                    content.Add(new StreamContent(snapshot.OpenReadStream()), "SnapShoots", snapshot.FileName);
+                }
+
+                var result = await _apiHelperService.PostAsync<BaseResponse>(ApiRoute.CreateProject, content);
+                if (result.Success)
+                {
+                    return RedirectToAction("Index", "Project");
+                }
+                return BadRequest(result);
             }
-
-            content.Add(new StreamContent(project.Logo.OpenReadStream()), "Logo", project.Logo.FileName);
-
-            content.Add(new StreamContent(project.Documentation.OpenReadStream()), "Documentation", project.Documentation.FileName);
-
-            foreach (var snapshot in project.SnapShoots)
-            {
-                content.Add(new StreamContent(snapshot.OpenReadStream()), "SnapShoots", snapshot.FileName);
-            }
-
-            var result = await _apiHelperService.PostAsync<BaseResponse>(ApiRoute.CreateProject, content);
-            if (result.Success)
+            catch (Exception ex)
             {
                 return RedirectToAction("Index", "Project");
             }
-            return BadRequest(result);
+           
         }
 
         [HttpGet]
@@ -127,15 +133,16 @@ namespace Management.Controllers
             ViewBag.Logo = result.LogoUrl;
             ViewBag.Documentation = result.DocumentationUrl;
             ViewBag.SnapShoot = result.SnapShootsUrl;
+            ViewBag.Statuses = new SelectList(Enum.GetValues(typeof(Status)));
+            ViewBag.CurrentStatus = result.Status;
 
-            var techStacks = await _apiHelperService.GetAsync<List<TechStackDto>>(ApiRoute.GetTechStackNames);
-            ViewBag.TechStackNames = new SelectList(techStacks, "Id", "Name");
+            ViewBag.TechStackNames = new SelectList(result.TechStackUsed, "Id", "Name");
 
             return View(result);
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdateProject(ProjectDto project)
+        public async Task<IActionResult> UpdateProject([FromForm] ProjectDto project)
         {
             var content = new MultipartFormDataContent();
             content.Add(new StringContent(project.ProjectId.ToString()), "ProjectId");
@@ -175,6 +182,28 @@ namespace Management.Controllers
                 content.Add(new StringContent(guid.ToString()), "TechStackUsed");
             }
             content.Add(new StringContent(JsonConvert.SerializeObject(new List<TechStackDto> { })), "TechStackUsedObj");
+
+            if (project.DeletedSnapShoots[0] is not null)
+            {
+                string deletedSnapShootsString = project.DeletedSnapShoots[0];
+                string[] deletedPaths = deletedSnapShootsString.Split(','); 
+
+                foreach (string path in deletedPaths)
+                {
+                    content.Add(new StringContent(path), "DeletedSnapShoots");
+                }
+            }
+
+            if (project.DeletedDocuments[0] is not null)
+            {
+                string deletedDocumentString = project.DeletedDocuments[0];
+                string[] deletedPaths = deletedDocumentString.Split(','); 
+
+                foreach (string path in deletedPaths)
+                {
+                    content.Add(new StringContent(path), "DeletedDocuments");
+                }
+            }
 
             var result = await _apiHelperService.PostAsync<ProjectDto>(ApiRoute.UpdateProjectPost, content);
             return RedirectToAction("Index");

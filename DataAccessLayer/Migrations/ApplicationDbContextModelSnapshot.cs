@@ -92,7 +92,7 @@ namespace Management.Data.Migrations
                     b.ToTable("Projects");
                 });
 
-            modelBuilder.Entity("Management.Common.Models.Entity.ProjectTechStack", b =>
+            modelBuilder.Entity("Management.Common.Models.Entity.TechStack", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -101,29 +101,13 @@ namespace Management.Data.Migrations
                     b.Property<Guid>("ProjectEntityId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("TechStackId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProjectEntityId");
-
-                    b.HasIndex("TechStackId");
-
-                    b.ToTable("ProjectTechStack");
-                });
-
-            modelBuilder.Entity("Management.Common.Models.Entity.TechStack", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("TechStackName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ProjectEntityId");
 
                     b.ToTable("TechStack");
                 });
@@ -203,17 +187,17 @@ namespace Management.Data.Migrations
                         {
                             Id = "b74ddd14-6340-4840-95c2-db12554843e5",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "371630cd-0d9b-42d9-863d-35ea2b1f0908",
+                            ConcurrencyStamp = "74796999-b3e8-4188-a811-7e472bf9c1fc",
                             Email = "admin@gmail.com",
                             EmailConfirmed = false,
                             FirstName = "Admin",
                             LockoutEnabled = false,
                             NormalizedEmail = "admin@gmail.com",
                             NormalizedUserName = "Admin",
-                            PasswordHash = "AQAAAAIAAYagAAAAEMVlfwLL8LbmU0yH1g3Bm8O/30LgIo1MriqCyelevNnOAsbS5U/0d8vWpSS9gDK02g==",
+                            PasswordHash = "AQAAAAIAAYagAAAAELYc2BcvI9eyz4dt0z9ZDCWq1TEEWMoFx87pPT+ApSbuM0q98KLKwkBQLwFOsQuRqA==",
                             PhoneNumber = "1234567890",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "c82ceaaa-0b4f-4526-86ef-4c8259d327a6",
+                            SecurityStamp = "d7265051-d941-427d-8717-ba523f75ac18",
                             TwoFactorEnabled = false,
                             UserName = "Admin"
                         },
@@ -221,17 +205,17 @@ namespace Management.Data.Migrations
                         {
                             Id = "554a8f54-c054-4de6-9654-654321098765",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "bba0a764-ed5c-4414-99ba-fdd6d0f4395c",
+                            ConcurrencyStamp = "642747cb-24f0-4b9a-a10c-4c0ba1418cb0",
                             Email = "hr@gmail.com",
                             EmailConfirmed = false,
                             FirstName = "HR",
                             LockoutEnabled = false,
                             NormalizedEmail = "hr@gmail.com",
                             NormalizedUserName = "HR",
-                            PasswordHash = "AQAAAAIAAYagAAAAEK6EGINuUHRK5shdfY0WYCiy2g4eTPhOz0QnVSxF8Ly4gKcSjt3g1fdb5RREuNKC5Q==",
+                            PasswordHash = "AQAAAAIAAYagAAAAECDJm/hh5Q2LIPRSP6wwkLb7NjVvMncd0z5fDpod/Ncj4AMqlqmmXXh0XK28Qi3Nkw==",
                             PhoneNumber = "9876543210",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "bcb7e3e7-3fc4-4b71-82b0-62d0171033e4",
+                            SecurityStamp = "7d51359b-c7f8-4d95-85d5-97eec94378e2",
                             TwoFactorEnabled = false,
                             UserName = "HR"
                         },
@@ -239,17 +223,17 @@ namespace Management.Data.Migrations
                         {
                             Id = "774a8f54-c054-4de6-9654-654321098755",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "8e451528-0d55-434e-bdc0-febf34a175b4",
+                            ConcurrencyStamp = "fb721c16-d9f6-4a7c-9c53-deae8dd3cdae",
                             Email = "user@gmail.com",
                             EmailConfirmed = false,
                             FirstName = "User",
                             LockoutEnabled = false,
                             NormalizedEmail = "user@gmail.com",
                             NormalizedUserName = "User",
-                            PasswordHash = "AQAAAAIAAYagAAAAEA3K5/q6EquyKuvW9vR1B5ILZvw9HHWCmjjABghfhGH5OUGyjqnaDK4s0mF8xurnWw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEAjsolCdT/FTaCCwSm8hv4TKrCxyJerCC3U9JgjQcJj9J8XT4l9DxYlXJs/aQcAbsQ==",
                             PhoneNumber = "987452361",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "ace9d439-c654-4529-9a71-dceb54b29ff1",
+                            SecurityStamp = "214156f1-e3ac-4b3b-9570-cd298971d201",
                             TwoFactorEnabled = false,
                             UserName = "User"
                         });
@@ -439,7 +423,7 @@ namespace Management.Data.Migrations
                     b.Navigation("ProjectEntity");
                 });
 
-            modelBuilder.Entity("Management.Common.Models.Entity.ProjectTechStack", b =>
+            modelBuilder.Entity("Management.Common.Models.Entity.TechStack", b =>
                 {
                     b.HasOne("Management.Common.Models.Entity.ProjectEntity", "ProjectEntity")
                         .WithMany("TechStackUsed")
@@ -447,15 +431,7 @@ namespace Management.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Management.Common.Models.Entity.TechStack", "TechStack")
-                        .WithMany("ProjectTechStacks")
-                        .HasForeignKey("TechStackId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("ProjectEntity");
-
-                    b.Navigation("TechStack");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -514,11 +490,6 @@ namespace Management.Data.Migrations
                     b.Navigation("Documents");
 
                     b.Navigation("TechStackUsed");
-                });
-
-            modelBuilder.Entity("Management.Common.Models.Entity.TechStack", b =>
-                {
-                    b.Navigation("ProjectTechStacks");
                 });
 #pragma warning restore 612, 618
         }

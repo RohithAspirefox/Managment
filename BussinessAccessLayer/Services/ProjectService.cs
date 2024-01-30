@@ -31,15 +31,17 @@ namespace Management.Services.Services
         public readonly ApplicationDbContext appDbContext;
         private readonly ILogger logger;
         private readonly IConfiguration configuration;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public ApplicationDbContext applicationDbContext { get; }
-        public ProjectService(ApplicationDbContext applicationDbContext, IWebHostEnvironment webHostEnvironment, ApplicationDbContext appDbContext, ILogger<ProjectService> logger, IConfiguration configuration)
+        public ProjectService(ApplicationDbContext applicationDbContext, IWebHostEnvironment webHostEnvironment, ApplicationDbContext appDbContext, ILogger<ProjectService> logger, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
             this.applicationDbContext = applicationDbContext;
             this.webHost = webHostEnvironment;
             this.appDbContext = appDbContext;
             this.logger = logger;
             this.configuration = configuration;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<string> AddAsync(ProjectDto projectDto)
@@ -49,12 +51,11 @@ namespace Management.Services.Services
 
             ProjectEntity projectEntity = new ProjectEntity
             {
-
                 Name = projectDto.Name,
                 ProductionUrl = projectDto.ProductionUrl,
-                Id = projectDto.ProjectId,
+                Id = Guid.NewGuid(),
                 Description = projectDto.Description,
-                TechStackUsed = projectDto.TechStackUsed.Select(x => new ProjectTechStack { TechStackId = x }).ToList(),
+                TechStackUsed = projectDto.TechStackUsed.First().Split(',').Select(x => new TechStack { TechStackName = x }).ToList(),
                 StageName = projectDto.StageName,
                 StageUrl = projectDto.StageUrl,
                 DevelopmentName = projectDto.DevelopmentName,
@@ -73,10 +74,18 @@ namespace Management.Services.Services
             }
             await SaveFileAsync(projectDto.Logo, localPath, projectEntity, DocumentType.Logo);
             await SaveFileAsync(projectDto.Documentation, localPath, projectEntity, DocumentType.Documentation);
+            try
+            {
+                appDbContext.Projects.Add(projectEntity);
+                await appDbContext.SaveChangesAsync();
+                logger.LogError("Reached After Save");
+            }
+            catch (Exception ex)
+            {
 
-            appDbContext.Projects.Add(projectEntity);
-            await appDbContext.SaveChangesAsync();
-            logger.LogError("Reached After Save");
+                throw ex;
+            }
+
 
             return Constants.Created;
         }
@@ -92,7 +101,45 @@ namespace Management.Services.Services
                     await file.CopyToAsync(fileStream);
                 }
 
-                project.Documents.Add(new() { FilePath = "https://localhost:7111/Images/" + fileName, FileName = fileName, DocumentType = docType, ProjectEntityId = project.Id });
+                project.Documents.Add(new() { FilePath = $"{_httpContextAccessor.HttpContext.Request.Scheme}://{_httpContextAccessor.HttpContext.Request.Host}{_httpContextAccessor.HttpContext.Request.PathBase}/Images/" + fileName, FileName = fileName, DocumentType = docType, ProjectEntityId = project.Id });
+            }
+        }
+
+        private async Task UpdateFileAsync(IFormFile file, string localPath, ProjectEntity project, DocumentType docType)
+        {
+            if (file != null)
+            {
+                var fileName = Guid.NewGuid().ToString() + "_" + file.FileName;
+                string filePath = Path.Combine(localPath, fileName);
+                using (Stream fileStream = new FileStream(filePath, FileMode.CreateNew))
+                {
+                    await file.CopyToAsync(fileStream);
+                }
+                var document = project.Documents.Where(x => x.ProjectEntityId == project.Id && x.DocumentType == docType).FirstOrDefault();
+                if (document == null)
+                {
+                    document = new Document
+                    {
+                        ProjectEntityId = project.Id,
+                        DocumentType = docType,
+                        FileName = fileName,
+                        FilePath= filePath
+                    };
+                    project.Documents.Add(document);
+                }
+
+                string urlPath = null;
+                if (_httpContextAccessor != null)
+                {
+                    urlPath = $"{_httpContextAccessor.HttpContext.Request.Scheme}://{_httpContextAccessor.HttpContext.Request.Host}{_httpContextAccessor.HttpContext.Request.PathBase}/Images/{fileName}";
+                }
+
+                document.FilePath = urlPath;
+
+                appDbContext.Projects.Update(project);
+                await appDbContext.SaveChangesAsync();
+
+
             }
         }
 
@@ -101,12 +148,11 @@ namespace Management.Services.Services
             return appDbContext.TechStack.Select(x => new TechStackDto { Name = x.TechStackName, Id = x.Id }).ToList();
         }
 
-        public List<ProjectEntity> GetAllProjects()
+        public async Task<List<ProjectEntity>> GetAllProjects()
         {
-            return appDbContext.Projects.Include(p => p.Documents)
+            return await appDbContext.Projects.Include(p => p.Documents)
             .Include(p => p.TechStackUsed)
-                .ThenInclude(pt => pt.TechStack)
-            .ToList();
+            .ToListAsync();
         }
 
         public bool DeleteProject(string id)
@@ -124,17 +170,13 @@ namespace Management.Services.Services
         public async Task<ProjectEntity> GetProjectById(string id)
         {
             var project = await appDbContext.Projects.Include(p => p.Documents)
-            .Include(p => p.TechStackUsed)
-                .ThenInclude(pt => pt.TechStack)
-            .SingleOrDefaultAsync(x => x.Id == Guid.Parse(id));
+            .Include(p => p.TechStackUsed).SingleOrDefaultAsync(x => x.Id == Guid.Parse(id));
             return project;
         }
         public async Task<BaseResponse> Update(ProjectDto entity)
         {
             var project = await appDbContext.Projects.Include(p => p.Documents)
-            .Include(p => p.TechStackUsed)
-                .ThenInclude(pt => pt.TechStack)
-            .SingleOrDefaultAsync(x => x.Id == entity.ProjectId);
+            .Include(p => p.TechStackUsed).SingleOrDefaultAsync(x => x.Id == entity.ProjectId);
 
 
             if (project != null)
@@ -143,12 +185,7 @@ namespace Management.Services.Services
                 project.StartDate = entity.StartDate;
                 project.Status = entity.Status;
                 project.Description = entity.Description;
-                project.TechStackUsed = entity.TechStackUsed
-                .Select(id => new ProjectTechStack
-                {
-                    TechStackId = id,
-                })
-                .ToList();
+                project.TechStackUsed = entity.TechStackUsed.Select(x => new TechStack { TechStackName = x }).ToList();
                 project.DevelopmentName = entity.DevelopmentName;
                 project.DevelopmentUrl = entity.DevelopmentUrl;
                 project.StageName = entity.StageName;
@@ -162,13 +199,28 @@ namespace Management.Services.Services
                 {
                     foreach (var doc in entity.SnapShoots)
                     {
-                        await SaveFileAsync(doc, localPath, project, DocumentType.SnapShoots);
+                        await UpdateFileAsync(doc, localPath, project, DocumentType.SnapShoots);
                     }
                 }
+                if (entity?.DeletedSnapShoots?.Any() ?? false)
+                {
+                    foreach (var item in entity.DeletedSnapShoots)
+                    {
+                        project.Documents.RemoveAll(x => string.Equals(x.FilePath, item));
+                    }
+                }
+                if (entity?.DeletedDocuments?.Any() ?? false)
+                {
+                    foreach (var item in entity.DeletedDocuments)
+                    {
+                        project.Documents.RemoveAll(x => string.Equals(x.FilePath, item));
+                    }
+                }
+
                 if (entity.Logo != null)
-                    await SaveFileAsync(entity.Logo, localPath, project, DocumentType.Logo);
+                    await UpdateFileAsync(entity.Logo, localPath, project, DocumentType.Logo);
                 if (entity.Documentation != null)
-                    await SaveFileAsync(entity.Documentation, localPath, project, DocumentType.Documentation);
+                    await UpdateFileAsync(entity.Documentation, localPath, project, DocumentType.Documentation);
 
                 appDbContext.Projects.Update(project);
                 await appDbContext.SaveChangesAsync();
@@ -179,17 +231,11 @@ namespace Management.Services.Services
 
         }
 
-        //public async Task<List<ProjectEntity>> SearchByName(string name)
-        //{
-        //    return appDbContext.Projects.Where(x => x.Name.Contains(name) || x.StageName.Contains(name) || x.DevelopmentName.Contains(name) || x.ProductionName.Contains(name)).ToList();
-        //}
-
         public async Task<List<ProjectEntity>> SearchByName(string name)
         {
             return appDbContext.Projects
                 .Include(x => x.Documents)
                 .Include(x => x.TechStackUsed)
-                .ThenInclude(x=>x.TechStack)
                 .Where(x =>
                     x.Name.Contains(name) ||
                     x.StageName.Contains(name) ||
@@ -199,7 +245,9 @@ namespace Management.Services.Services
                     x.StageUrl.Contains(name) ||
                     x.ProductionUrl.Contains(name) ||
                     x.Documents.Any(doc => doc.FileName.Contains(name)) ||
-                    x.TechStackUsed.Any(ts => ts.TechStack.TechStackName.Contains(name)) 
+                //x.TechStackUsed.Contains(name)
+                x.TechStackUsed.Any(ts => ts.TechStackName.Contains(name))
+
                 )
                 .ToList();
         }

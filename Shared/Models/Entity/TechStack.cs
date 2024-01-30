@@ -13,6 +13,9 @@ namespace Management.Common.Models.Entity
         public Guid Id {  get; set; }
         [Required]
         public string TechStackName { get; set; }
-        public List<ProjectTechStack> ProjectTechStacks { get; set; }
+        //public List<ProjectTechStack> ProjectTechStacks { get; set; }
+
+        public Guid ProjectEntityId { get; set; }
+        public ProjectEntity ProjectEntity { get; set; }
     }
 }

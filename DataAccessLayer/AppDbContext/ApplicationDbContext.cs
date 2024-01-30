@@ -17,7 +17,7 @@ namespace Management.Data.AppDbContext
         }
         public DbSet<ProjectEntity> Projects { get; set; }
         public DbSet<TechStack> TechStack { get; set; }
-        public DbSet<ProjectTechStack> ProjectTechStack { get; set; }
+        //public DbSet<ProjectTechStack> ProjectTechStack { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)

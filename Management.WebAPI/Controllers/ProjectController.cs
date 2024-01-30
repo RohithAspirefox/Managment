@@ -48,18 +48,21 @@ namespace Management.WebAPI.Controllers
         [HttpGet("GetAllProjects")]
         public async Task<List<ProjectDto>> GetAllProjects()
         {
-            var projectTasks = projectService.GetAllProjects()
-                .Select(async p => new ProjectDto
+            try
+            {
+                var allProject = await projectService.GetAllProjects();
+
+
+                var projectList = allProject.Select(p => new ProjectDto
                 {
                     ProjectId = p.Id,
-                    LogoUrl = p.Documents.First(x => x.DocumentType == DocumentType.Logo).FilePath,
+                    LogoUrl = p.Documents?.FirstOrDefault(x => x.DocumentType == DocumentType.Logo)?.FilePath ?? string.Empty,
                     Name = p.Name,
                     StartDate = p.StartDate,
                     Status = p.Status,
                     Description = p.Description,
-                    TechStackUsedObj = p.TechStackUsed.Select(ts => new TechStackDto { Id = ts.TechStackId, Name = ts.TechStack.TechStackName }).ToList(),
-
-                    DocumentationUrl = p.Documents.First(x => x.DocumentType == DocumentType.Documentation).FilePath,
+                    TechStackUsed = p.TechStackUsed.Select(x => x.TechStackName).ToList(),
+                    DocumentationUrl = p.Documents?.FirstOrDefault(x => x.DocumentType == DocumentType.Documentation)?.FilePath ?? string.Empty,
                     SnapShootsUrl = p.Documents.Where(x => x.DocumentType == DocumentType.SnapShoots).Select(x => x.FilePath).ToList(),
                     DevelopmentName = p.DevelopmentName,
                     DevelopmentUrl = p.DevelopmentUrl,
@@ -67,10 +70,17 @@ namespace Management.WebAPI.Controllers
                     StageUrl = p.StageUrl,
                     ProductionName = p.ProductionName,
                     ProductionUrl = p.ProductionUrl
-                });
+                    
+                }).ToList();
 
-            var projects = await Task.WhenAll(projectTasks);
-            return projects.ToList();
+                return projectList;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
         }
 
 
@@ -107,7 +117,7 @@ namespace Management.WebAPI.Controllers
         {
             var project = await projectService.GetProjectById(updateObj.id);
 
-            var projectDto = new ProjectDto
+            var projectDto = new ProjectDto()
             {
                 ProjectId = project.Id,
                 LogoUrl = project.Documents.FirstOrDefault(x => x.DocumentType == DocumentType.Logo).FilePath,
@@ -115,9 +125,10 @@ namespace Management.WebAPI.Controllers
                 StartDate = project.StartDate,
                 Status = project.Status,
                 Description = project.Description,
-                TechStackUsedObj= project.TechStackUsed.Select(x=> new TechStackDto { Id=x.TechStack.Id,Name=x.TechStack.TechStackName}).ToList(),
-                DocumentationUrl = project.Documents.FirstOrDefault(x => x.DocumentType == DocumentType.Documentation).FilePath,
-                SnapShootsUrl = project.Documents.Where(x => x.DocumentType == DocumentType.SnapShoots).Select(x => x.FilePath).ToList(),
+                TechStackUsed = project.TechStackUsed.Select(x => x.TechStackName).ToList(),
+                //DocumentationUrl = project.Documents.FirstOrDefault(x => x.DocumentType == DocumentType.Documentation).FilePath,
+                DocumentationUrl = project.Documents.FirstOrDefault(x => x.DocumentType == DocumentType.Documentation)?.FilePath ?? string.Empty,
+            SnapShootsUrl = project.Documents.Where(x => x.DocumentType == DocumentType.SnapShoots).Select(x => x.FilePath).ToList(),
                 DevelopmentName = project.DevelopmentName,
                 DevelopmentUrl = project.DevelopmentUrl,
                 StageName = project.StageName,
@@ -143,11 +154,7 @@ namespace Management.WebAPI.Controllers
             if (name != null)
             {
                 var result = await projectService.SearchByName(name);
-                //List<ProjectDto> list = new();
-                //list= mapper.Map<List<ProjectDto>>(result);
-                //return list;
-
-                var list= result.Select(async p => new ProjectDto
+                var list = result.Select(async p => new ProjectDto
                 {
                     ProjectId = p.Id,
                     LogoUrl = p.Documents.First(x => x.DocumentType == DocumentType.Logo).FilePath,
@@ -155,7 +162,8 @@ namespace Management.WebAPI.Controllers
                     StartDate = p.StartDate,
                     Status = p.Status,
                     Description = p.Description,
-                    TechStackUsedObj = p.TechStackUsed.Select(ts => new TechStackDto { Id = ts.TechStackId, Name = ts.TechStack.TechStackName }).ToList(),
+                    TechStackUsed = p.TechStackUsed.Select(ts => ts.TechStackName).ToList(),
+                    //TechStackUsed = p.TechStackUsed.Split(",").ToList(),
 
                     DocumentationUrl = p.Documents.First(x => x.DocumentType == DocumentType.Documentation).FilePath,
                     SnapShootsUrl = p.Documents.Where(x => x.DocumentType == DocumentType.SnapShoots).Select(x => x.FilePath).ToList(),

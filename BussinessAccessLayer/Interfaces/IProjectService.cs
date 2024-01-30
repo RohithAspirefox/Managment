@@ -15,7 +15,7 @@ namespace Management.Services.Interfaces
     {
         Task<string> AddAsync(ProjectDto projectDto);
         List<TechStackDto> GetTechStackNames();
-        List<ProjectEntity> GetAllProjects();
+        Task<List<ProjectEntity>> GetAllProjects();
         bool DeleteProject(string id);
         Task<ProjectEntity> GetProjectById(string id);
         Task<BaseResponse> Update(ProjectDto entity);

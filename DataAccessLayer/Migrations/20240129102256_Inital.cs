@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Management.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class First : Migration
+    public partial class Inital : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -73,18 +73,6 @@ namespace Management.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Projects", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "TechStack",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    TechStackName = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TechStack", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -215,26 +203,20 @@ namespace Management.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ProjectTechStack",
+                name: "TechStack",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ProjectEntityId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    TechStackId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    TechStackName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ProjectEntityId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProjectTechStack", x => x.Id);
+                    table.PrimaryKey("PK_TechStack", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ProjectTechStack_Projects_ProjectEntityId",
+                        name: "FK_TechStack_Projects_ProjectEntityId",
                         column: x => x.ProjectEntityId,
                         principalTable: "Projects",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ProjectTechStack_TechStack_TechStackId",
-                        column: x => x.TechStackId,
-                        principalTable: "TechStack",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -254,9 +236,9 @@ namespace Management.Data.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { "554a8f54-c054-4de6-9654-654321098765", 0, "bba0a764-ed5c-4414-99ba-fdd6d0f4395c", "hr@gmail.com", false, "HR", null, false, null, "hr@gmail.com", "HR", "AQAAAAIAAYagAAAAEK6EGINuUHRK5shdfY0WYCiy2g4eTPhOz0QnVSxF8Ly4gKcSjt3g1fdb5RREuNKC5Q==", "9876543210", false, "bcb7e3e7-3fc4-4b71-82b0-62d0171033e4", false, "HR" },
-                    { "774a8f54-c054-4de6-9654-654321098755", 0, "8e451528-0d55-434e-bdc0-febf34a175b4", "user@gmail.com", false, "User", null, false, null, "user@gmail.com", "User", "AQAAAAIAAYagAAAAEA3K5/q6EquyKuvW9vR1B5ILZvw9HHWCmjjABghfhGH5OUGyjqnaDK4s0mF8xurnWw==", "987452361", false, "ace9d439-c654-4529-9a71-dceb54b29ff1", false, "User" },
-                    { "b74ddd14-6340-4840-95c2-db12554843e5", 0, "371630cd-0d9b-42d9-863d-35ea2b1f0908", "admin@gmail.com", false, "Admin", null, false, null, "admin@gmail.com", "Admin", "AQAAAAIAAYagAAAAEMVlfwLL8LbmU0yH1g3Bm8O/30LgIo1MriqCyelevNnOAsbS5U/0d8vWpSS9gDK02g==", "1234567890", false, "c82ceaaa-0b4f-4526-86ef-4c8259d327a6", false, "Admin" }
+                    { "554a8f54-c054-4de6-9654-654321098765", 0, "642747cb-24f0-4b9a-a10c-4c0ba1418cb0", "hr@gmail.com", false, "HR", null, false, null, "hr@gmail.com", "HR", "AQAAAAIAAYagAAAAECDJm/hh5Q2LIPRSP6wwkLb7NjVvMncd0z5fDpod/Ncj4AMqlqmmXXh0XK28Qi3Nkw==", "9876543210", false, "7d51359b-c7f8-4d95-85d5-97eec94378e2", false, "HR" },
+                    { "774a8f54-c054-4de6-9654-654321098755", 0, "fb721c16-d9f6-4a7c-9c53-deae8dd3cdae", "user@gmail.com", false, "User", null, false, null, "user@gmail.com", "User", "AQAAAAIAAYagAAAAEAjsolCdT/FTaCCwSm8hv4TKrCxyJerCC3U9JgjQcJj9J8XT4l9DxYlXJs/aQcAbsQ==", "987452361", false, "214156f1-e3ac-4b3b-9570-cd298971d201", false, "User" },
+                    { "b74ddd14-6340-4840-95c2-db12554843e5", 0, "74796999-b3e8-4188-a811-7e472bf9c1fc", "admin@gmail.com", false, "Admin", null, false, null, "admin@gmail.com", "Admin", "AQAAAAIAAYagAAAAELYc2BcvI9eyz4dt0z9ZDCWq1TEEWMoFx87pPT+ApSbuM0q98KLKwkBQLwFOsQuRqA==", "1234567890", false, "d7265051-d941-427d-8717-ba523f75ac18", false, "Admin" }
                 });
 
             migrationBuilder.InsertData(
@@ -314,14 +296,9 @@ namespace Management.Data.Migrations
                 column: "ProjectEntityId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProjectTechStack_ProjectEntityId",
-                table: "ProjectTechStack",
+                name: "IX_TechStack_ProjectEntityId",
+                table: "TechStack",
                 column: "ProjectEntityId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ProjectTechStack_TechStackId",
-                table: "ProjectTechStack",
-                column: "TechStackId");
         }
 
         /// <inheritdoc />
@@ -346,7 +323,7 @@ namespace Management.Data.Migrations
                 name: "Document");
 
             migrationBuilder.DropTable(
-                name: "ProjectTechStack");
+                name: "TechStack");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
@@ -356,9 +333,6 @@ namespace Management.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "Projects");
-
-            migrationBuilder.DropTable(
-                name: "TechStack");
         }
     }
 }

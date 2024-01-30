@@ -26,9 +26,9 @@ namespace Management.Common.Models.Entity
 
         public string Description { get; set; }
 
-
-        public List<ProjectTechStack> TechStackUsed { get; set; }
-
+        //public IEnumerable<TechStack> TechStackUsed { get; set; }
+        //public List<ProjectTechStack> TechStackUsed { get; set; }
+        public List<TechStack> TechStackUsed { get; set; }
         public string? DevelopmentName { get; set; }
 
         public string? DevelopmentUrl { get; set; }

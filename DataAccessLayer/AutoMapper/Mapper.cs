@@ -35,9 +35,9 @@ namespace Management.Data.AutoMapper
 
                 .ForMember(dest => dest.SnapShootsUrl, opt => opt.MapFrom(src => src.Documents.Where(x => x.ProjectEntityId == src.Id && x.DocumentType == DocumentType.SnapShoots).Select(x => x.FilePath).ToList()))
 
-                .ForMember(dest => dest.LogoUrl, opt => opt.MapFrom(src => src.Documents.FirstOrDefault(x => x.ProjectEntityId == src.Id && x.DocumentType == DocumentType.Logo).FilePath))
+                .ForMember(dest => dest.LogoUrl, opt => opt.MapFrom(src => src.Documents.FirstOrDefault(x => x.ProjectEntityId == src.Id && x.DocumentType == DocumentType.Logo).FilePath));
 
-                .ForMember(dest => dest.TechStackUsedObj, opt => opt.MapFrom(src => src.TechStackUsed.Where(x => x.ProjectEntityId == src.Id).Select(y => new TechStackDto { Id = y.Id, Name = y.TechStack.TechStackName }).ToList()));
+                //.ForMember(dest => dest.TechStackUsedObj, opt => opt.MapFrom(src => src.TechStackUsed.Where(x => x.ProjectEntityId == src.Id).Select(y => new TechStackDto { Id = y.Id, Name = y.TechStackName }).ToList()));
             
         }
 

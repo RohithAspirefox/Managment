@@ -21,7 +21,6 @@ namespace Management.Services.Services
         }
 
         public async Task<T?> GetAsync<T>(string endpoint, Dictionary<string, string> headers = null, string token = null)
-        
         {
             AddHeaders(headers, token);
 

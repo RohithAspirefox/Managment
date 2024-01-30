@@ -16,126 +16,242 @@
 
 }
 <head>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@2.0.1/dist/css/multi-select-tag.css">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/bootstrap.tagsinput/0.4.2/bootstrap-tagsinput.css" />
 
 </head>
 
-<style>
-    .bootstrap-tagsinput {
-        min-height: 100px;
-    }
-</style>
 
 <h1>Update Project here</h1>
 
-<form asp-action="UpdateProject" method="post" enctype="multipart/form-data">
+<form id="formData">
     <div class="form-group">
         <label asp-for="Logo"></label>
         <br />
-        <input class="btn btn-secondary" value="ViewBag.Logo" type="file" asp-for="Logo" />
+        <input id="FileUpload1" class="btn btn-secondary" value="ViewBag.Logo" type="file" asp-for="Logo" />
         @if (ViewBag.Logo != null)
         {
             <p>Selected Logo: <a href="@ViewBag.Logo" target="_blank">@ViewBag.Logo</a></p>
         }
-        <input hidden type="text" asp-for="ProjectId" />
+        <input id="ProjectId" hidden type="text" asp-for="ProjectId" />
 
     </div>
 
     <div class="form-group">
         <label asp-for="Name"></label>
-        <input asp-for="Name" class="form-control" value="@Model.Name" />
+        <input asp-for="Name" id="Name" class="form-control" value="@Model.Name" />
         <span asp-validation-for="Name" class="text-danger"></span>
     </div>
 
     <div class="form-group">
         <label asp-for="StartDate"></label>
-        <input type="date" asp-for="StartDate" class="form-control" value="@Model.StartDate.ToString("yyyy-MM-dd")" />
+        <input type="date" asp-for="StartDate" id="StartDate" class="form-control" value="@Model.StartDate.ToString("yyyy-MM-dd")" />
         <span asp-validation-for="StartDate" class="text-danger"></span>
     </div>
 
     <label asp-for="Status "></label>
-    @Html.DropDownList("Statuses", null, Model.Status.ToString(), htmlAttributes: new { @class = "form-control" })
+    @Html.DropDownList("Statuses",null, htmlAttributes: new { @class = "form-control" })
+
 
     <div class="form-group">
         <label asp-for="Description "></label>
-        <input asp-for="Description " class="form-control" value="@Model.Description" />
+        <input asp-for="Description " id="Description" class="form-control" value="@Model.Description" />
         <span asp-validation-for="Description " class="text-danger"></span>
     </div>
 
+
     <label asp-for="TechStackUsed">TechStackUsed</label>
-    <select asp-for="TechStackUsed" asp-items="@ViewBag.TechStackNames"  class="form-control" id="TechStackUsed" multiple>
-    @foreach (var item in ViewBag.TechStackNames)
-    {
-        <option value="@item.Value" selected="@(Model.TechStackUsedObj.Any(x => x.Id.ToString() == item.Value))">
-            @item.Text
-        </option>
-    }
+    <select asp-for="TechStackUsed" class="form-control" name="TechStackUsed" type="text" id="txttags" data-role="tagsinput" multiple>
+        @{
+            var selectedValues = Model.TechStackUsed.FirstOrDefault().Split(",").ToList() ;
+
+            foreach (var techStack in selectedValues)
+            {
+                            <option value="@techStack" selected="true">@techStack</option>
+            }
+        }
     </select>
+
+
 
     <div class="form-group">
         <label asp-for="Documentation"></label>
         <br />
-        <input class="btn btn-secondary" type="file" asp-for="Documentation" />
+        <input id="FileUpload2" class="btn btn-secondary" type="file" asp-for="Documentation" />
         @if (ViewBag.Documentation != null)
         {
-            <p>Selected Documentation: <a href="@ViewBag.Documentation" target="_blank">@ViewBag.Documentation</a></p>
+            <p>Selected Documentation: <a href="@ViewBag.Documentation" target="_blank">@ViewBag.Documentation</a>
+                <button type="button" class="close" aria-label="Close" onclick="deleteDocumentation('@ViewBag.Documentation')">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </p>
         }
     </div>
 
     <div class="form-group">
         <label asp-for="SnapShoots"></label>
         <br />
-        <input class="btn btn-secondary" type="file" asp-for="SnapShoots" multiple />
+        <input id="FileUpload3" class="btn btn-secondary" type="file" asp-for="SnapShoots" multiple />
         @if (ViewBag.SnapShoot != null)
         {
             foreach (var item in ViewBag.SnapShoot)
             {
-                <p>Selected SnapShoot: <a href="@item" target="_blank">@item</a></p>
+                <p>Selected SnapShoot: <a href="@item" target="_blank">@item</a>
+                    <button type="button" class="close" aria-label="Close" onclick="deleteSnapShoot('@item')">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </p>
             }
         }
     </div>
 
     <div class="form-group">
         <label asp-for="DevelopmentName  "></label>
-        <input asp-for="DevelopmentName  " class="form-control" value="@Model.DevelopmentName" />
+        <input asp-for="DevelopmentName  " id="DevelopmentName" class="form-control" value="@Model.DevelopmentName" />
         <span asp-validation-for="DevelopmentName  " class="text-danger"></span>
     </div>
     <div class="form-group">
         <label asp-for="DevelopmentUrl  "></label>
-        <input asp-for="DevelopmentUrl  " class="form-control" value="@Model.DevelopmentUrl" />
+        <input asp-for="DevelopmentUrl  " id="DevelopmentUrl" class="form-control" value="@Model.DevelopmentUrl" />
         <span asp-validation-for="DevelopmentUrl  " class="text-danger"></span>
     </div>
     <div class="form-group">
         <label asp-for="StageName  "></label>
-        <input asp-for="StageName  " class="form-control" value="@Model.StageName" />
+        <input asp-for="StageName  " id="StageName" class="form-control" value="@Model.StageName" />
         <span asp-validation-for="StageName  " class="text-danger"></span>
     </div>
     <div class="form-group">
         <label asp-for="StageUrl   "></label>
-        <input asp-for="StageUrl   " class="form-control" value="@Model.StageUrl" />
+        <input asp-for="StageUrl   " id="StageUrl" class="form-control" value="@Model.StageUrl" />
         <span asp-validation-for="StageUrl   " class="text-danger"></span>
     </div>
     <div class="form-group">
         <label asp-for="ProductionName   "></label>
-        <input asp-for="ProductionName   " class="form-control" value="@Model.ProductionName" />
+        <input asp-for="ProductionName   " id="ProductionName" class="form-control" value="@Model.ProductionName" />
         <span asp-validation-for="ProductionName   " class="text-danger"></span>
     </div>
     <div class="form-group">
         <label asp-for="ProductionUrl   "></label>
-        <input asp-for="ProductionUrl   " class="form-control" value="@Model.ProductionUrl" />
+        <input asp-for="ProductionUrl   " id="ProductionUrl" class="form-control" value="@Model.ProductionUrl" />
         <span asp-validation-for="ProductionUrl   " class="text-danger"></span>
     </div>
     <br />
-    <button type="submit" class="btn btn-primary">Update</button>
+    <button id="submitBtn" type="button" class="btn btn-primary">Update</button>
 </form>
 
-<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-<script src="../../assets/vendor/bootstrap-tagsinput/js/bootstrap-tagsinput.min.js"></script>
-@* <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jquery-validation-unobtrusive@3.2.12/dist/jquery.validate.unobtrusive.min.js"></script> *@
-<script src="../js/bootstrap-tagsinput.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@2.0.1/dist/js/multi-select-tag.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/bootstrap.tagsinput/0.4.2/bootstrap-tagsinput.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
 <script>
-    new MultiSelectTag('TechStackUsed')
+    let existingSnapShoots = @Html.Raw(Json.Serialize(ViewBag.SnapShoot));
+    let existingDocuments = @Html.Raw(Json.Serialize(ViewBag.Documentation));
+
+    let deletedSnapShoots = [];
+    let deletedDocuments = [];
+
+    function deleteDocumentation(documentPath) {
+        debugger;
+
+        deletedDocuments.push(documentPath);
+        $(`p:contains('${documentPath}')`).remove();
+
+
+        console.log('Document removed from UI');
+        console.log(existingDocuments);
+    }
+
+    function deleteSnapShoot(snapShootPath) {
+        debugger;
+
+        deletedSnapShoots.push(snapShootPath);
+        $(`p:contains('${snapShootPath}')`).remove();
+
+        existingSnapShoots.splice(existingSnapShoots.indexOf(snapShootPath), 1);
+        
+        console.log('SnapShoot removed from UI and existingSnapShoots!');
+        console.log(existingSnapShoots);
+
+    }
+
+    $('#submitBtn').on('click', function (e) {
+        const formData = new FormData(document.getElementById('formData')); // Get form data
+        debugger;
+        var newFormData = new FormData();
+
+        var ProjectId = document.getElementById("ProjectId").value;
+        var Logo = document.getElementById("FileUpload1").files[0];
+        var Name = document.getElementById('Name').value;
+        var StartDate = document.getElementById('StartDate').value;
+        var Status = formData.get('Statuses');
+        var Description = document.getElementById('Description').value;
+        var TechStackUsed = $("#txttags option:selected").map(function () {
+            return $(this).val();
+        }).get();
+        var Documentation = document.getElementById('FileUpload2').files[0];
+        // var SnapShoots = document.getElementById('FileUpload3').files[0];
+
+
+        const SnapShoots = document.getElementById("FileUpload3").files;
+        for (let i = 0; i < SnapShoots.length; i++) {
+            newFormData.append("SnapShoots", SnapShoots[i]);
+        }
+
+        var DevelopmentName = document.getElementById('DevelopmentName').value;
+        var DevelopmentUrl = document.getElementById('DevelopmentUrl').value;
+        var StageName = document.getElementById('StageName').value;
+        var StageUrl = document.getElementById('StageUrl').value;
+        var ProductionName = document.getElementById('ProductionName').value;
+        var ProductionUrl = document.getElementById('ProductionUrl').value;
+
+        debugger;
+
+        newFormData.append("ProjectId", ProjectId);
+        newFormData.append("Logo", Logo);
+        newFormData.append("Name", Name);
+        newFormData.append("StartDate", StartDate);
+        newFormData.append("Status", Status);
+        newFormData.append("Description", Description);
+        newFormData.append("TechStackUsed", TechStackUsed);
+        newFormData.append("Documentation", Documentation);
+        // newFormData.append("SnapShoots", SnapShoots);
+        newFormData.append("DevelopmentName", DevelopmentName);
+        newFormData.append("DevelopmentUrl", DevelopmentUrl);
+        newFormData.append("StageName", StageName);
+        newFormData.append("StageUrl", StageUrl);
+        newFormData.append("ProductionName", ProductionName);
+        newFormData.append("ProductionUrl", ProductionUrl);
+        newFormData.append("DeletedSnapShoots", deletedSnapShoots);
+        newFormData.append("DeletedDocuments", deletedDocuments);
+
+        debugger;
+
+        $.ajax({
+            url: '/Project/UpdateProject',
+            method: 'POST',
+            data: newFormData,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                console.log('Data submitted successfully!', data);
+                debugger;
+                setTimeout(() => {
+                    var redirectUrl = "https://localhost:7222/Project/Index";
+                    window.location.href = redirectUrl;
+                }, 1000)
+            },
+            error: function (error) {
+                console.error('Error submitting data:', error);
+            }
+        });
+    });
 
 </script>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

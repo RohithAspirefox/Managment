@@ -4,7 +4,7 @@ namespace Management.Common.Models.DTO
 {
     public class LoginModelDto
     {
-        [Required(ErrorMessage = "Email is required")]
+        [Required(ErrorMessage = "Email iss required")]
         [EmailAddress(ErrorMessage = "Invalid email address")]
         public string Email { get; set; }
 

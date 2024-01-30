@@ -28,7 +28,7 @@ namespace Management.Common.Models.DTO
 
         [Required(ErrorMessage = "Description is Required")]
         public string Description { get; set; }
-        public List<Guid> TechStackUsed { get; set; }
+        public List<string> TechStackUsed { get; set; }
         public List<TechStackDto>? TechStackUsedObj { get; set; }
         public IFormFile? Documentation { get; set; }
         public string? DocumentationUrl { get; set; }
@@ -47,6 +47,9 @@ namespace Management.Common.Models.DTO
         public string? ProductionName { get; set; }
         
         public string? ProductionUrl { get; set; }
+
+        public List<string>? DeletedSnapShoots { get; set; }
+        public List<string>? DeletedDocuments { get; set; }
     }
 
     public class TechStackDto
