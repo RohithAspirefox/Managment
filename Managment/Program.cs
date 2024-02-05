@@ -1,8 +1,10 @@
 using Management.Common.Models;
 using Management.Common.Models.Entity;
+using Management.Data.AppDbContext;
 using Management.Services.Interfaces;
 using Management.Services.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
 
 namespace Management
 {

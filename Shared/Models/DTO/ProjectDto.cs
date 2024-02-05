@@ -19,7 +19,9 @@ namespace Management.Common.Models.DTO
         public string? LogoUrl { get; set; }
 
         [Required(ErrorMessage ="Name is Required")]
-        public string? Name { get; set; }
+        public string Name { get; set; }
+
+        public List<string> Developers { get; set; }
 
         [Required(ErrorMessage = "Date is Required")]
         public DateTime StartDate { get; set; }
@@ -33,21 +35,19 @@ namespace Management.Common.Models.DTO
         public IFormFile? Documentation { get; set; }
         public string? DocumentationUrl { get; set; }
         public List<IFormFile>? SnapShoots { get; set; }
-
         public List<string>? SnapShootsUrl { get; set; }
-
+        [Required(ErrorMessage = "DevelopmentName is Required")]
         public string? DevelopmentName { get; set; }
-   
+        [Required(ErrorMessage = "DevelopmentUrl is Required")]
         public string? DevelopmentUrl { get; set; }
-    
+        [Required(ErrorMessage = "StageName is Required")]
         public string? StageName { get; set; }
-     
+        [Required(ErrorMessage = "StageUrl is Required")]
         public string? StageUrl { get; set; }
-       
+        [Required(ErrorMessage = "ProductionName is Required")]
         public string? ProductionName { get; set; }
-        
+        [Required(ErrorMessage = "ProductionUrl is Required")]
         public string? ProductionUrl { get; set; }
-
         public List<string>? DeletedSnapShoots { get; set; }
         public List<string>? DeletedDocuments { get; set; }
     }

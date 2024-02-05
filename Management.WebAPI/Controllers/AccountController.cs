@@ -7,6 +7,8 @@ using System.Web;
 using Management.Common;
 using Management.Common.Models.DTO;
 using Management.Common.Models.Entity;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 namespace Management.WebAPI.Controllers
 {
     [Route("api/[controller]")]
@@ -30,6 +32,21 @@ namespace Management.WebAPI.Controllers
             _logger = logger;
             _configuration = configuration;
             _hostingEnvironment = webHostEnvironment;
+        }
+
+        [HttpGet("GetAllUsers")]
+        public async Task<List<User>> GetAllUsers()
+        {
+            try
+            {
+                var users= await _userManager.Users.ToListAsync();
+                return users;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
         [HttpPost("Register")]

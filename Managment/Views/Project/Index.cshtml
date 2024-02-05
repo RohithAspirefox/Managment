@@ -58,6 +58,7 @@
             <th>Documentation</th>
             <th>SnapShoots</th>
             <th>TechStackUsed</th>
+            <th>Developers</th>
             <th>Action</th>
     </thead>
     <tbody>
@@ -90,6 +91,12 @@
                         @foreach (var techStack in project.TechStackUsed)
                         {
                             <p>@techStack</p>
+                        }
+                    </td>
+                    <td>
+                        @foreach (var developer in project.Developers)
+                        {
+                            <p>@developer</p>
                         }
                     </td>
                     <td style="display:flex">

@@ -26,8 +26,6 @@ namespace Management.Common.Models.Entity
 
         public string Description { get; set; }
 
-        //public IEnumerable<TechStack> TechStackUsed { get; set; }
-        //public List<ProjectTechStack> TechStackUsed { get; set; }
         public List<TechStack> TechStackUsed { get; set; }
         public string? DevelopmentName { get; set; }
 
@@ -40,5 +38,6 @@ namespace Management.Common.Models.Entity
         public string? ProductionName { get; set; }
 
         public string? ProductionUrl { get; set; }
+        public List<UserProject> UserProject { get; set; }
     }
 }

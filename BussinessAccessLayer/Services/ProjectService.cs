@@ -5,22 +5,12 @@ using Management.Common.Models.Entity;
 using Management.Data.AppDbContext;
 using Management.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
-using System.Runtime.InteropServices;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 using Management.Common.Enum;
 using Microsoft.EntityFrameworkCore;
 using Management.Common.Models.ApiResponse;
-using System.Security.Cryptography.X509Certificates;
 
 namespace Management.Services.Services
 {
@@ -63,8 +53,8 @@ namespace Management.Services.Services
                 StartDate = projectDto.StartDate,
                 Status = projectDto.Status,
                 ProductionName = projectDto.ProductionName,
+                UserProject = projectDto.Developers.First().Split(',').Select(x => new UserProject { UserId = x }).ToList(),
             };
-            var filePath = configuration["FilePath"];
 
             var localPath = Path.Combine(webHost.WebRootPath, "Images");
 
@@ -74,19 +64,10 @@ namespace Management.Services.Services
             }
             await SaveFileAsync(projectDto.Logo, localPath, projectEntity, DocumentType.Logo);
             await SaveFileAsync(projectDto.Documentation, localPath, projectEntity, DocumentType.Documentation);
-            try
-            {
-                appDbContext.Projects.Add(projectEntity);
-                await appDbContext.SaveChangesAsync();
-                logger.LogError("Reached After Save");
-            }
-            catch (Exception ex)
-            {
-
-                throw ex;
-            }
-
-
+            
+            appDbContext.Projects.Add(projectEntity);
+            await appDbContext.SaveChangesAsync();
+            
             return Constants.Created;
         }
 
@@ -101,7 +82,7 @@ namespace Management.Services.Services
                     await file.CopyToAsync(fileStream);
                 }
 
-                project.Documents.Add(new() { FilePath = $"{_httpContextAccessor.HttpContext.Request.Scheme}://{_httpContextAccessor.HttpContext.Request.Host}{_httpContextAccessor.HttpContext.Request.PathBase}/Images/" + fileName, FileName = fileName, DocumentType = docType, ProjectEntityId = project.Id });
+                project.Documents.Add(new() { FilePath = $"{_httpContextAccessor?.HttpContext?.Request.Scheme}://{_httpContextAccessor?.HttpContext?.Request.Host}{_httpContextAccessor?.HttpContext?.Request.PathBase}/Images/" + fileName, FileName = fileName, DocumentType = docType, ProjectEntityId = project.Id });
             }
         }
 
@@ -123,7 +104,7 @@ namespace Management.Services.Services
                         ProjectEntityId = project.Id,
                         DocumentType = docType,
                         FileName = fileName,
-                        FilePath= filePath
+                        FilePath = filePath
                     };
                     project.Documents.Add(document);
                 }
@@ -131,14 +112,13 @@ namespace Management.Services.Services
                 string urlPath = null;
                 if (_httpContextAccessor != null)
                 {
-                    urlPath = $"{_httpContextAccessor.HttpContext.Request.Scheme}://{_httpContextAccessor.HttpContext.Request.Host}{_httpContextAccessor.HttpContext.Request.PathBase}/Images/{fileName}";
+                    urlPath = $"{_httpContextAccessor?.HttpContext?.Request.Scheme}://{_httpContextAccessor?.HttpContext?.Request.Host}{_httpContextAccessor?.HttpContext?.Request.PathBase}/Images/{fileName}";
                 }
 
                 document.FilePath = urlPath;
 
                 appDbContext.Projects.Update(project);
                 await appDbContext.SaveChangesAsync();
-
 
             }
         }
@@ -150,8 +130,8 @@ namespace Management.Services.Services
 
         public async Task<List<ProjectEntity>> GetAllProjects()
         {
-            return await appDbContext.Projects.Include(p => p.Documents)
-            .Include(p => p.TechStackUsed)
+            return await appDbContext.Projects.Include(p => p.Documents).Include(p => p.UserProject).ThenInclude(u => u.User)
+            .Include(p => p.TechStackUsed).Include(p=>p.UserProject).ThenInclude(u=>u.User)
             .ToListAsync();
         }
 
@@ -169,13 +149,13 @@ namespace Management.Services.Services
         }
         public async Task<ProjectEntity> GetProjectById(string id)
         {
-            var project = await appDbContext.Projects.Include(p => p.Documents)
+            var project = await appDbContext.Projects.Include(p => p.Documents).Include(p => p.UserProject).ThenInclude(u => u.User)
             .Include(p => p.TechStackUsed).SingleOrDefaultAsync(x => x.Id == Guid.Parse(id));
             return project;
         }
         public async Task<BaseResponse> Update(ProjectDto entity)
         {
-            var project = await appDbContext.Projects.Include(p => p.Documents)
+            var project = await appDbContext.Projects.Include(p => p.Documents).Include(p => p.UserProject).ThenInclude(u => u.User)
             .Include(p => p.TechStackUsed).SingleOrDefaultAsync(x => x.Id == entity.ProjectId);
 
 
@@ -192,6 +172,7 @@ namespace Management.Services.Services
                 project.StageUrl = entity.StageUrl;
                 project.ProductionName = entity.ProductionName;
                 project.ProductionUrl = entity.ProductionUrl;
+                project.UserProject = entity.Developers.First().Split(',').Select(x => new UserProject { UserId = x }).ToList();
 
                 var localPath = Path.Combine(webHost.WebRootPath, "Images");
 
@@ -221,23 +202,29 @@ namespace Management.Services.Services
                     await UpdateFileAsync(entity.Logo, localPath, project, DocumentType.Logo);
                 if (entity.Documentation != null)
                     await UpdateFileAsync(entity.Documentation, localPath, project, DocumentType.Documentation);
+                try
+                {
+                    appDbContext.Projects.Update(project);
+                    await appDbContext.SaveChangesAsync();
+                    return new BaseResponse { Success = true };
+                }
+                catch (Exception ex)
+                {
 
-                appDbContext.Projects.Update(project);
-                await appDbContext.SaveChangesAsync();
-                return new BaseResponse { Success = true };
+                    throw ex;
+                }
             }
-
             return new BaseResponse { Success = false };
-
         }
 
         public async Task<List<ProjectEntity>> SearchByName(string name)
         {
             return appDbContext.Projects
-                .Include(x => x.Documents)
+                .Include(x => x.Documents).Include(p => p.UserProject).ThenInclude(u => u.User)
                 .Include(x => x.TechStackUsed)
                 .Where(x =>
                     x.Name.Contains(name) ||
+                    x.Description.Contains(name) ||
                     x.StageName.Contains(name) ||
                     x.DevelopmentName.Contains(name) ||
                     x.ProductionName.Contains(name) ||
@@ -245,9 +232,8 @@ namespace Management.Services.Services
                     x.StageUrl.Contains(name) ||
                     x.ProductionUrl.Contains(name) ||
                     x.Documents.Any(doc => doc.FileName.Contains(name)) ||
-                //x.TechStackUsed.Contains(name)
-                x.TechStackUsed.Any(ts => ts.TechStackName.Contains(name))
-
+                    x.TechStackUsed.Any(ts => ts.TechStackName.Contains(name)) ||
+                    x.UserProject.Any(x => x.User.FirstName.Contains(name))
                 )
                 .ToList();
         }

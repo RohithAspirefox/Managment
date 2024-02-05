@@ -27,18 +27,11 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
-                        @if(User.IsInRole("Admin"))
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Project" 
-                                asp-action="Index">Project</a>
-                            </li>
-                        }
                     </ul>
                     <ul style="text-decoration:None">
                         @if (User.Identity.IsAuthenticated)
                         {
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Logout">Logout</a>
+                            <a class="nav-link text-dark" style="margin-left: 2103px" asp-area="" asp-controller="Account" asp-action="Logout">Logout</a>
                         }
                         else
                         {

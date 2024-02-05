@@ -11,9 +11,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Management.WebAPI.Controllers
 {
+
     [Route("api/[controller]")]
     [ApiController]
-    [AllowAnonymous]
     public class ProjectController : ControllerBase
     {
         public readonly IProjectService projectService;
@@ -51,36 +51,13 @@ namespace Management.WebAPI.Controllers
             try
             {
                 var allProject = await projectService.GetAllProjects();
-
-
-                var projectList = allProject.Select(p => new ProjectDto
-                {
-                    ProjectId = p.Id,
-                    LogoUrl = p.Documents?.FirstOrDefault(x => x.DocumentType == DocumentType.Logo)?.FilePath ?? string.Empty,
-                    Name = p.Name,
-                    StartDate = p.StartDate,
-                    Status = p.Status,
-                    Description = p.Description,
-                    TechStackUsed = p.TechStackUsed.Select(x => x.TechStackName).ToList(),
-                    DocumentationUrl = p.Documents?.FirstOrDefault(x => x.DocumentType == DocumentType.Documentation)?.FilePath ?? string.Empty,
-                    SnapShootsUrl = p.Documents.Where(x => x.DocumentType == DocumentType.SnapShoots).Select(x => x.FilePath).ToList(),
-                    DevelopmentName = p.DevelopmentName,
-                    DevelopmentUrl = p.DevelopmentUrl,
-                    StageName = p.StageName,
-                    StageUrl = p.StageUrl,
-                    ProductionName = p.ProductionName,
-                    ProductionUrl = p.ProductionUrl
-                    
-                }).ToList();
-
+                var projectList= mapper.Map<List<ProjectDto>>(allProject);
                 return projectList;
             }
             catch (Exception)
             {
-
                 throw;
             }
-
         }
 
 
@@ -96,47 +73,19 @@ namespace Management.WebAPI.Controllers
             try
             {
                 var projDelete = projectService.DeleteProject(deleteObj.id);
-                return new BaseResponse
-                {
-                    Success = true,
-                };
+                return new BaseResponse{Success = true,};
             }
             catch (Exception ex)
             {
-
-                return new BaseResponse
-                {
-                    Success = false,
-                };
+                return new BaseResponse{Success = false,};
             }
-
         }
 
         [HttpPost("UpdateProject")]
         public async Task<ProjectDto> UpdateProject(UpdateObj updateObj)
         {
             var project = await projectService.GetProjectById(updateObj.id);
-
-            var projectDto = new ProjectDto()
-            {
-                ProjectId = project.Id,
-                LogoUrl = project.Documents.FirstOrDefault(x => x.DocumentType == DocumentType.Logo).FilePath,
-                Name = project.Name,
-                StartDate = project.StartDate,
-                Status = project.Status,
-                Description = project.Description,
-                TechStackUsed = project.TechStackUsed.Select(x => x.TechStackName).ToList(),
-                //DocumentationUrl = project.Documents.FirstOrDefault(x => x.DocumentType == DocumentType.Documentation).FilePath,
-                DocumentationUrl = project.Documents.FirstOrDefault(x => x.DocumentType == DocumentType.Documentation)?.FilePath ?? string.Empty,
-            SnapShootsUrl = project.Documents.Where(x => x.DocumentType == DocumentType.SnapShoots).Select(x => x.FilePath).ToList(),
-                DevelopmentName = project.DevelopmentName,
-                DevelopmentUrl = project.DevelopmentUrl,
-                StageName = project.StageName,
-                StageUrl = project.StageUrl,
-                ProductionName = project.ProductionName,
-                ProductionUrl = project.ProductionUrl
-            };
-
+            var projectDto=mapper.Map<ProjectDto>(project);
             return projectDto;
         }
 
@@ -145,7 +94,6 @@ namespace Management.WebAPI.Controllers
         {
             var result = await projectService.Update(existingProjectDto);
             return Ok(result);
-
         }
 
         [HttpPost("SearchByName")]
@@ -154,28 +102,8 @@ namespace Management.WebAPI.Controllers
             if (name != null)
             {
                 var result = await projectService.SearchByName(name);
-                var list = result.Select(async p => new ProjectDto
-                {
-                    ProjectId = p.Id,
-                    LogoUrl = p.Documents.First(x => x.DocumentType == DocumentType.Logo).FilePath,
-                    Name = p.Name,
-                    StartDate = p.StartDate,
-                    Status = p.Status,
-                    Description = p.Description,
-                    TechStackUsed = p.TechStackUsed.Select(ts => ts.TechStackName).ToList(),
-                    //TechStackUsed = p.TechStackUsed.Split(",").ToList(),
-
-                    DocumentationUrl = p.Documents.First(x => x.DocumentType == DocumentType.Documentation).FilePath,
-                    SnapShootsUrl = p.Documents.Where(x => x.DocumentType == DocumentType.SnapShoots).Select(x => x.FilePath).ToList(),
-                    DevelopmentName = p.DevelopmentName,
-                    DevelopmentUrl = p.DevelopmentUrl,
-                    StageName = p.StageName,
-                    StageUrl = p.StageUrl,
-                    ProductionName = p.ProductionName,
-                    ProductionUrl = p.ProductionUrl
-                });
-                var projects = await Task.WhenAll(list);
-                return projects.ToList();
+                var list = mapper.Map<List<ProjectDto>>(result);
+                return list;
             }
             return [];
         }

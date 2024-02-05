@@ -16,6 +16,7 @@
         public static string UpdateProject= "/api/Project/UpdateProject";
         public static string UpdateProjectPost = "/api/Project/UpdateProjectPost";
         public static string SearchByName = "/api/Project/SearchByName";
+        public static string GetAllUsers = "/api/Account/GetAllUsers";
 
         #endregion Account
     }

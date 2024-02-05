@@ -19,6 +19,8 @@
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/bootstrap.tagsinput/0.4.2/bootstrap-tagsinput.css" />
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@2.0.1/dist/css/multi-select-tag.css">
+
 </head>
 
 
@@ -43,14 +45,40 @@
         <span asp-validation-for="Name" class="text-danger"></span>
     </div>
 
+    <label asp-for="Developers">Developers</label>
+    <select asp-for="Developers"  class="form-control" name="Developers" type="text" id="DevTags" multiple>
+        @{
+            var selectedValuess = Model.Developers
+            .SelectMany(ts => ts.Split(","))
+            .ToList();
+
+            var exeUsers = ViewBag.Users;
+
+            foreach (var dev in exeUsers)
+            {
+                if (selectedValuess.Any(x => x == dev.Text))
+                {
+                    <option value="@dev.Value" selected="true">@dev.Text</option>
+                }
+                else
+                {
+                    <option value="@dev.Value">@dev.Text</option>
+                }
+            }
+        }
+    </select>
+
+
     <div class="form-group">
         <label asp-for="StartDate"></label>
         <input type="date" asp-for="StartDate" id="StartDate" class="form-control" value="@Model.StartDate.ToString("yyyy-MM-dd")" />
         <span asp-validation-for="StartDate" class="text-danger"></span>
     </div>
 
-    <label asp-for="Status "></label>
-    @Html.DropDownList("Statuses",null, htmlAttributes: new { @class = "form-control" })
+    
+    <label asp-for="Status"></label>
+    @Html.DropDownListFor(model => model.Status, ViewBag.Statuses as SelectList, new { @class = "form-control" })
+
 
 
     <div class="form-group">
@@ -63,11 +91,13 @@
     <label asp-for="TechStackUsed">TechStackUsed</label>
     <select asp-for="TechStackUsed" class="form-control" name="TechStackUsed" type="text" id="txttags" data-role="tagsinput" multiple>
         @{
-            var selectedValues = Model.TechStackUsed.FirstOrDefault().Split(",").ToList() ;
+            var selectedValues = Model.TechStackUsed
+            .SelectMany(ts => ts.Split(","))
+            .ToList();
 
             foreach (var techStack in selectedValues)
             {
-                            <option value="@techStack" selected="true">@techStack</option>
+               <option value="@techStack" selected="true">@techStack</option>
             }
         }
     </select>
@@ -144,6 +174,13 @@
 
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 
+<script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@2.0.1/dist/js/multi-select-tag.js"></script>
+
+<script>
+    new MultiSelectTag('DevTags')
+
+</script>
+
 <script>
     let existingSnapShoots = @Html.Raw(Json.Serialize(ViewBag.SnapShoot));
     let existingDocuments = @Html.Raw(Json.Serialize(ViewBag.Documentation));
@@ -204,6 +241,7 @@
         var StageUrl = document.getElementById('StageUrl').value;
         var ProductionName = document.getElementById('ProductionName').value;
         var ProductionUrl = document.getElementById('ProductionUrl').value;
+        var Developers = Array.from(document.getElementById('DevTags').selectedOptions).map(option => option.value);
 
         debugger;
 
@@ -224,6 +262,7 @@
         newFormData.append("ProductionUrl", ProductionUrl);
         newFormData.append("DeletedSnapShoots", deletedSnapShoots);
         newFormData.append("DeletedDocuments", deletedDocuments);
+        newFormData.append("Developers", Developers);
 
         debugger;
 

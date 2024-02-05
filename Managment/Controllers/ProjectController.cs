@@ -6,14 +6,16 @@ using Management.Common.Models.DTO;
 using Management.Common.Models.Entity;
 using Management.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Drawing.Printing;
 
 namespace Management.Controllers
 {
-
+    [Authorize(Roles = "HR")]
     [Route("[controller]/[action]")]
     public class ProjectController : Controller
     {
@@ -23,7 +25,6 @@ namespace Management.Controllers
         {
             _apiHelperService = apiHelperService;
         }
-
 
         public async Task<IActionResult> Index(int? page, string sortField, string sortOrder)
         {
@@ -43,20 +44,19 @@ namespace Management.Controllers
                 }
                 else
                 {
-
                     ViewBag.Message = "No records found.";
                     return View();
                 }
             }
 
             var allResults = await _apiHelperService.GetAsync<List<ProjectDto>>(ApiRoute.GetAllProject);
+            
             int totalPages;
             if (page == null)
             {
                 totalPages = (int)Math.Ceiling((double)allResults.Count / pageSize);
                 page = totalPages;
             }
-            
 
             var paginatedAllResults = await SortProjects(allResults, sortField, sortOrder, page.Value, pageSize);
 
@@ -70,6 +70,14 @@ namespace Management.Controllers
             ViewBag.TechStackNames = new SelectList(result, "Id", "Name");
 
             ViewBag.Statuses = new SelectList(Enum.GetValues(typeof(Status)));
+
+            var users = await _apiHelperService.GetAsync<List<User>>(ApiRoute.GetAllUsers);
+
+            var usersSelectList = users.Select(u => new SelectListItem
+            {Value = u.Id,Text = $"{u.FirstName}"}).ToList();
+
+            ViewBag.Users = usersSelectList;
+
             return View();
         }
 
@@ -77,40 +85,12 @@ namespace Management.Controllers
         public async Task<IActionResult> AddProject([FromForm] ProjectDto project)
         {
             if (!ModelState.IsValid)
-            {
-                return RedirectToAction("Add");
-            }
+                return Json(1);
 
             try
             {
                 var content = new MultipartFormDataContent();
-                content.Add(new StringContent(project.ProjectId.ToString()), "ProjectId");
-                content.Add(new StringContent(project.Status.ToString()), "Status");
-                content.Add(new StringContent(project.Name), "Name");
-                content.Add(new StringContent(project.StartDate.ToString()), "StartDate");
-                content.Add(new StringContent(project.Description.ToString()), "Description");
-                content.Add(new StringContent(project.DevelopmentName.ToString()), "DevelopmentName");
-                content.Add(new StringContent(project.DevelopmentUrl.ToString()), "DevelopmentUrl");
-                content.Add(new StringContent(project.StageName.ToString()), "StageName");
-                content.Add(new StringContent(project.ProductionName.ToString()), "ProductionName");
-                content.Add(new StringContent(project.StageUrl.ToString()), "StageUrl");
-                content.Add(new StringContent(project.ProductionUrl.ToString()), "ProductionUrl");
-
-
-                foreach (var techStackItem in project.TechStackUsed)
-                {
-                    content.Add(new StringContent(techStackItem), "TechStackUsed");
-                }
-
-                content.Add(new StreamContent(project.Logo.OpenReadStream()), "Logo", project.Logo.FileName);
-
-                content.Add(new StreamContent(project.Documentation.OpenReadStream()), "Documentation", project.Documentation.FileName);
-
-                foreach (var snapshot in project.SnapShoots)
-                {
-                    content.Add(new StreamContent(snapshot.OpenReadStream()), "SnapShoots", snapshot.FileName);
-                }
-
+                AddCommonContent(content, project);
                 var result = await _apiHelperService.PostAsync<BaseResponse>(ApiRoute.CreateProject, content);
                 if (result.Success)
                 {
@@ -136,6 +116,13 @@ namespace Management.Controllers
             ViewBag.Statuses = new SelectList(Enum.GetValues(typeof(Status)));
             ViewBag.CurrentStatus = result.Status;
 
+            var users = await _apiHelperService.GetAsync<List<User>>(ApiRoute.GetAllUsers);
+            var usersSelectList = users.Select(u => new SelectListItem
+            {Value = u.Id,Text = $"{u.FirstName}"}).ToList();
+
+            ViewBag.Users = usersSelectList;
+
+            ViewBag.Developers = new SelectList(result.Developers, "Id", "Name");
             ViewBag.TechStackNames = new SelectList(result.TechStackUsed, "Id", "Name");
 
             return View(result);
@@ -145,66 +132,7 @@ namespace Management.Controllers
         public async Task<IActionResult> UpdateProject([FromForm] ProjectDto project)
         {
             var content = new MultipartFormDataContent();
-            content.Add(new StringContent(project.ProjectId.ToString()), "ProjectId");
-            content.Add(new StringContent(project.Status.ToString()), "Status");
-            content.Add(new StringContent(project.Name), "Name");
-            content.Add(new StringContent(project.StartDate.ToString()), "StartDate");
-            content.Add(new StringContent(project.Description.ToString()), "Description");
-            content.Add(new StringContent(project.DevelopmentName.ToString()), "DevelopmentName");
-            content.Add(new StringContent(project.DevelopmentUrl.ToString()), "DevelopmentUrl");
-            content.Add(new StringContent(project.StageName.ToString()), "StageName");
-            content.Add(new StringContent(project.ProductionName.ToString()), "ProductionName");
-            content.Add(new StringContent(project.StageUrl.ToString()), "StageUrl");
-            content.Add(new StringContent(project.ProductionUrl.ToString()), "ProductionUrl");
-
-            if (project.Logo is not null)
-            {
-                content.Add(new StreamContent(project.Logo.OpenReadStream()), "Logo", project.Logo.FileName);
-
-            }
-            if (project.Documentation is not null)
-            {
-
-                content.Add(new StreamContent(project.Documentation.OpenReadStream()), "Documentation", project.Documentation.FileName);
-            }
-
-            if (project.SnapShoots is not null)
-            {
-
-                foreach (var snapshot in project.SnapShoots)
-                {
-                    content.Add(new StreamContent(snapshot.OpenReadStream()), "SnapShoots", snapshot.FileName);
-                }
-            }
-
-            foreach (var guid in project.TechStackUsed)
-            {
-                content.Add(new StringContent(guid.ToString()), "TechStackUsed");
-            }
-            content.Add(new StringContent(JsonConvert.SerializeObject(new List<TechStackDto> { })), "TechStackUsedObj");
-
-            if (project.DeletedSnapShoots[0] is not null)
-            {
-                string deletedSnapShootsString = project.DeletedSnapShoots[0];
-                string[] deletedPaths = deletedSnapShootsString.Split(','); 
-
-                foreach (string path in deletedPaths)
-                {
-                    content.Add(new StringContent(path), "DeletedSnapShoots");
-                }
-            }
-
-            if (project.DeletedDocuments[0] is not null)
-            {
-                string deletedDocumentString = project.DeletedDocuments[0];
-                string[] deletedPaths = deletedDocumentString.Split(','); 
-
-                foreach (string path in deletedPaths)
-                {
-                    content.Add(new StringContent(path), "DeletedDocuments");
-                }
-            }
-
+            AddCommonContentForUpdate(content, project);
             var result = await _apiHelperService.PostAsync<ProjectDto>(ApiRoute.UpdateProjectPost, content);
             return RedirectToAction("Index");
         }
@@ -282,6 +210,108 @@ namespace Management.Controllers
             return paginatedResults;
         }
 
+        private void AddCommonContent(MultipartFormDataContent content, ProjectDto project)
+        {
+            content.Add(new StringContent(project.ProjectId.ToString()), "ProjectId");
+            content.Add(new StringContent(project.Status.ToString()), "Status");
+            content.Add(new StringContent(project.Name), "Name");
+            content.Add(new StringContent(project.StartDate.ToString()), "StartDate");
+            content.Add(new StringContent(project.Description.ToString()), "Description");
+            content.Add(new StringContent(project.DevelopmentName.ToString()), "DevelopmentName");
+            content.Add(new StringContent(project.DevelopmentUrl.ToString()), "DevelopmentUrl");
+            content.Add(new StringContent(project.StageName.ToString()), "StageName");
+            content.Add(new StringContent(project.ProductionName.ToString()), "ProductionName");
+            content.Add(new StringContent(project.StageUrl.ToString()), "StageUrl");
+            content.Add(new StringContent(project.ProductionUrl.ToString()), "ProductionUrl");
+
+
+            foreach (var techStackItem in project.TechStackUsed)
+            {
+                content.Add(new StringContent(techStackItem), "TechStackUsed");
+            }
+            foreach (var dev in project.Developers)
+            {
+                content.Add(new StringContent(dev), "Developers");
+            }
+
+            content.Add(new StreamContent(project.Logo.OpenReadStream()), "Logo", project.Logo.FileName);
+
+            content.Add(new StreamContent(project.Documentation.OpenReadStream()), "Documentation", project.Documentation.FileName);
+
+            foreach (var snapshot in project.SnapShoots)
+            {
+                content.Add(new StreamContent(snapshot.OpenReadStream()), "SnapShoots", snapshot.FileName);
+            }
+        }
+
+        private void AddCommonContentForUpdate(MultipartFormDataContent content, ProjectDto project)
+        {
+            content.Add(new StringContent(project.ProjectId.ToString()), "ProjectId");
+            content.Add(new StringContent(project.Status.ToString()), "Status");
+            content.Add(new StringContent(project.Name), "Name");
+            content.Add(new StringContent(project.StartDate.ToString()), "StartDate");
+            content.Add(new StringContent(project.Description.ToString()), "Description");
+            content.Add(new StringContent(project.DevelopmentName.ToString()), "DevelopmentName");
+            content.Add(new StringContent(project.DevelopmentUrl.ToString()), "DevelopmentUrl");
+            content.Add(new StringContent(project.StageName.ToString()), "StageName");
+            content.Add(new StringContent(project.ProductionName.ToString()), "ProductionName");
+            content.Add(new StringContent(project.StageUrl.ToString()), "StageUrl");
+            content.Add(new StringContent(project.ProductionUrl.ToString()), "ProductionUrl");
+
+            if (project.Logo is not null)
+            {
+                content.Add(new StreamContent(project.Logo.OpenReadStream()), "Logo", project.Logo.FileName);
+
+            }
+            if (project.Documentation is not null)
+            {
+
+                content.Add(new StreamContent(project.Documentation.OpenReadStream()), "Documentation", project.Documentation.FileName);
+            }
+
+            if (project.SnapShoots is not null)
+            {
+
+                foreach (var snapshot in project.SnapShoots)
+                {
+                    content.Add(new StreamContent(snapshot.OpenReadStream()), "SnapShoots", snapshot.FileName);
+                }
+            }
+
+            foreach (var guid in project.TechStackUsed)
+            {
+                content.Add(new StringContent(guid.ToString()), "TechStackUsed");
+            }
+
+            foreach (var dev in project.Developers)
+            {
+                content.Add(new StringContent(dev), "Developers");
+            }
+
+            content.Add(new StringContent(JsonConvert.SerializeObject(new List<TechStackDto> { })), "TechStackUsedObj");
+
+            if (project.DeletedSnapShoots[0] is not null)
+            {
+                string deletedSnapShootsString = project.DeletedSnapShoots[0];
+                string[] deletedPaths = deletedSnapShootsString.Split(',');
+
+                foreach (string path in deletedPaths)
+                {
+                    content.Add(new StringContent(path), "DeletedSnapShoots");
+                }
+            }
+
+            if (project.DeletedDocuments[0] is not null)
+            {
+                string deletedDocumentString = project.DeletedDocuments[0];
+                string[] deletedPaths = deletedDocumentString.Split(',');
+
+                foreach (string path in deletedPaths)
+                {
+                    content.Add(new StringContent(path), "DeletedDocuments");
+                }
+            }
+        }
 
 
     }

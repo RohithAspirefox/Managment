@@ -1,0 +1,2 @@
+Dapper refrefrence link
+https://www.c-sharpcorner.com/article/using-dapper-in-asp-net-core-web-api/

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Management.Common.Models.Entity;
+using Microsoft.AspNetCore.Identity;
 
 namespace Management.Common.Models
 {
@@ -6,5 +7,6 @@ namespace Management.Common.Models
     {
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
+        public List<UserProject> Projects { get; set; } 
     }
 }
