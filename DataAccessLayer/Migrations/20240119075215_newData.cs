@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -7,7 +8,7 @@
 namespace Management.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class Init : Migration
+    public partial class newData : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -33,6 +34,9 @@ namespace Management.Data.Migrations
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ImageURl = table.Column<bool>(type: "bit", nullable: true),
+                    DocumentURL = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsLogged = table.Column<bool>(type: "bit", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -164,17 +168,19 @@ namespace Management.Data.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
+                    { "123013f0-5201-4317-abd8-c211f91b7123", "3", "User", "User" },
                     { "c7b013f0-5201-4317-abd8-c211f91b7330", "2", "HR", "Human Resource" },
                     { "fab4fac1-c546-41de-aebc-a14da6895711", "1", "Admin", "Admin" }
                 });
 
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
-                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "DocumentURL", "Email", "EmailConfirmed", "FirstName", "ImageURl", "IsLogged", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { "554a8f54-c054-4de6-9654-654321098765", 0, "f8d07b03-34e0-4468-89a1-62f41c2af22d", "hr@gmail.com", false, "HR", null, false, null, "hr@gmail.com", "HR", "AQAAAAIAAYagAAAAEETZaCByV2cW6ewdBHIf5cD2LZvnF97vlF8jYrDa+2i8LUbJzwCl41ncenjnRMquIw==", "9876543210", false, "58fb3d3b-d63b-4a03-9252-6219e158ba76", false, "HR" },
-                    { "b74ddd14-6340-4840-95c2-db12554843e5", 0, "c269b1d2-f3f1-4179-afff-7184494095f9", "admin@gmail.com", false, "Admin", null, false, null, "admin@gmail.com", "Admin", "AQAAAAIAAYagAAAAEOCPfoBfSaPhQX3yKkFV/n/U7TRBJ48a4sXr3a0HlFo1hp/SzuzOf1/mcAiupHiERA==", "1234567890", false, "50f8cde5-ec20-435b-ad20-ecd6c22518ff", false, "Admin" }
+                    { "554a8f54-c054-4de6-9654-654321098765", 0, "f1cf9ef0-9a75-426c-981a-60710fe2f47e", null, "hr@gmail.com", false, "HR", null, false, null, false, null, "hr@gmail.com", "HR", "AQAAAAIAAYagAAAAEJk86WZliSBZzx3gwH4vc+HA4HjgvLeSBfWbK9UddAQq2uquJ80usrYBKqyHssg44A==", "9876543210", false, "856ef372-9ec9-45f8-a870-65a80c66a0d8", false, "HR" },
+                    { "774a8f54-c054-4de6-9654-654321098755", 0, "004b5494-10e9-4da5-82b5-a8e72e073496", null, "user@gmail.com", false, "User", null, false, null, false, null, "user@gmail.com", "User", "AQAAAAIAAYagAAAAEFdStEwZ0OQDygx2EZjp87x1N+Uz5JNTWvTBnsNutjTeYoMgbuNWqMFPsn9azEgvKw==", "987452361", false, "ef012a84-2e2e-41c9-af91-d2558c1bf981", false, "User" },
+                    { "b74ddd14-6340-4840-95c2-db12554843e5", 0, "7319ad70-9738-4a65-8bac-902376c2fc18", null, "admin@gmail.com", false, "Admin", null, false, null, false, null, "admin@gmail.com", "Admin", "AQAAAAIAAYagAAAAEPfFlgN2QSXvr5+miRuNQ6fAm81m5EDJsRJlmhaKmbmyRRckyuls49M3sj0beDEPXw==", "1234567890", false, "fad72171-acf8-4170-a45a-a75fa79e69ad", false, "Admin" }
                 });
 
             migrationBuilder.InsertData(
@@ -183,6 +189,7 @@ namespace Management.Data.Migrations
                 values: new object[,]
                 {
                     { "c7b013f0-5201-4317-abd8-c211f91b7330", "554a8f54-c054-4de6-9654-654321098765" },
+                    { "123013f0-5201-4317-abd8-c211f91b7123", "774a8f54-c054-4de6-9654-654321098755" },
                     { "fab4fac1-c546-41de-aebc-a14da6895711", "b74ddd14-6340-4840-95c2-db12554843e5" }
                 });
 

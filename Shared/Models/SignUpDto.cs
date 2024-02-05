@@ -21,7 +21,6 @@ namespace Management.Common.Models
         [DataType(DataType.Password)]
         public string? ConfirmPassword { get; set; }
 
-        [Required]
         public string? PhoneNumber { get; set; }
     }
 }

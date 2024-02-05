@@ -1,0 +1,123 @@
+﻿@model Management.Common.Models.ProfileEdit;
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    Layout = "_accountLayout";
+}
+
+@* <div class="form-group">
+    <label asp-for="ProfileImage" class="control-label"></label>
+    <div class="custom-file">
+        <input asp-for="ProfileImage" class="custom-file-input" id="customFile">
+        <label class="custom-file-label" for="customFile">Choose file</label>
+    </div>
+    <span asp-validation-for="ProfileImage" class="text-danger"></span>
+</div> *@
+
+
+
+<link href="~/css/signup.css" rel="stylesheet" />
+
+<div class="container">
+    <div class="card_user_input">
+        <div class="card_title">
+            <div class="btn btn-success">Please Fill your deatils </div>
+        </div>
+        <div class="form">
+            <form enctype="multipart/form-data" asp-action="EditProfile" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div>
+                    <label asp-for="@Model.FirstName"></label>
+                    <input asp-for="@Model.FirstName" type="text" name="FirstName" id="FirstName" placeholder="FirstName" />
+                    <span asp-validation-for="@Model.LastName" class="text-danger"></span>
+                </div>
+
+               <div>
+                    <label asp-for="@Model.LastName"></label>
+                    <input asp-for="@Model.LastName" type="text" name="LastName" placeholder="LastName" id="LastName" />
+                    <span asp-validation-for="@Model.LastName" class="text-danger"></span>
+               </div>
+
+                <div>
+                    <label asp-for="@Model.Email"></label>
+                    <input asp-for="@Model.Email" type="email" name="Email" placeholder="" id="Email" readonly/>
+                    <span asp-validation-for="@Model.Email" class="text-danger"></span>
+                </div>
+
+                <div>
+                <label asp-for="@Model.Address"></label>
+                <input asp-for="@Model.Address" type="text" name="Address" placeholder="" id="Address" />
+                <span asp-validation-for="@Model.Address" class="text-danger"></span>
+                </div>
+
+                <div>
+                <label asp-for="@Model.Mobile"></label>
+                <input asp-for="@Model.Mobile" type="text" name="Mobile" id="Mobile" placeholder="PhoneNumber" />
+                <span asp-validation-for="@Model.Mobile" class="text-danger"></span>
+                </div>
+                @*
+                <label asp-for="@Model.ProfileImage"></label>
+                <input asp-for="@Model.ProfileImage" type="file" required="required" name="file" id="file" />
+                <span asp-validation-for="@Model.ProfileImage" class="text-danger"></span> *@
+
+
+                @*      <label asp-for="@Model.ProfileImage" class="control-label"></label>
+                <div class="custom-file">
+                <input asp-for="@Model.ProfileImage" class="custom-file-input" id="ProfileImage">
+
+                <label class="custom-file-label" for="ProfileImage">Choose file</label>
+                </div>
+                <span asp-validation-for="@Model.ProfileImage" class="text-danger"></span> *@
+                @*
+                <label asp-for="@Model.ProfileImage"></label>
+                <input asp-for="@Model.ProfileImage" type="file" required="required" name="file" id="file" /> *@
+
+
+
+                <div
+                    <label asp-for="@Model.ProfileImage" class="control-label"></label>
+                    <img src="~/images/@ViewBag.Image" class="rounded-circle" height="60" width="80" asp-append-version="true" />
+
+                    <input asp-for="@Model.ProfileImage" class="custom-file-input" id="ProfileImage" name="ProfileImage">
+                </div>
+             @*    <span asp-validation-for="@Model.ProfileImage" class="text-danger"></span> *@
+
+                
+
+
+
+
+
+                <button type="submit">Submit</button>
+
+
+            </form>
+        </div>
+
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+
+    }
+
+    @* <script type="text/javascript">
+        $(".custom-file-input").on("change", function () {
+            debugger;
+            var fileName = $(this).val().split("\\").pop();
+            $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+        });
+    </script> *@
+
+}

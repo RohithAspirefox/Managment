@@ -6,6 +6,8 @@ namespace Management.Common.Models
     {
         [Required]
         [DataType(DataType.Password)]
+        [RegularExpression(@"^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[^\w\d\s:])([^\s]){8,32}$",
+                    ErrorMessage = "Password doesn't meet security rules.")]
         public string Password { get; set; }
 
         [DataType(DataType.Password)]

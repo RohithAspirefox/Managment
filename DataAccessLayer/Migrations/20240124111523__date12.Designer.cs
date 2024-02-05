@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Management.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240104065829_Init")]
-    partial class Init
+    [Migration("20240124111523__date12")]
+    partial class _date12
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,8 +33,23 @@ namespace Management.Data.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
+                    b.Property<string>("Active")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("City")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DateOfJoining")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DocumentURL")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
@@ -46,6 +61,15 @@ namespace Management.Data.Migrations
 
                     b.Property<string>("FirstName")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Gender")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageURL")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("IsLogged")
+                        .HasColumnType("bit");
 
                     b.Property<string>("LastName")
                         .HasColumnType("nvarchar(max)");
@@ -100,17 +124,19 @@ namespace Management.Data.Migrations
                         {
                             Id = "b74ddd14-6340-4840-95c2-db12554843e5",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "c269b1d2-f3f1-4179-afff-7184494095f9",
+                            Active = "Yes",
+                            ConcurrencyStamp = "5fb82f30-54bb-4d90-8e54-b21e15cc9390",
                             Email = "admin@gmail.com",
                             EmailConfirmed = false,
                             FirstName = "Admin",
+                            IsLogged = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "admin@gmail.com",
                             NormalizedUserName = "Admin",
-                            PasswordHash = "AQAAAAIAAYagAAAAEOCPfoBfSaPhQX3yKkFV/n/U7TRBJ48a4sXr3a0HlFo1hp/SzuzOf1/mcAiupHiERA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEG2Mgm4xF65gshyzYyzIbJeYdNpNVxZSXbE4GRj99TRpOZnczz8ZgRVZNRTlwkAI9w==",
                             PhoneNumber = "1234567890",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "50f8cde5-ec20-435b-ad20-ecd6c22518ff",
+                            SecurityStamp = "5528d522-91f4-429d-b2a0-1a2d22d317c9",
                             TwoFactorEnabled = false,
                             UserName = "Admin"
                         },
@@ -118,19 +144,41 @@ namespace Management.Data.Migrations
                         {
                             Id = "554a8f54-c054-4de6-9654-654321098765",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "f8d07b03-34e0-4468-89a1-62f41c2af22d",
+                            Active = "Yes",
+                            ConcurrencyStamp = "5e110e20-9c60-438e-bb2c-f6f7fad6e58d",
                             Email = "hr@gmail.com",
                             EmailConfirmed = false,
                             FirstName = "HR",
+                            IsLogged = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "hr@gmail.com",
                             NormalizedUserName = "HR",
-                            PasswordHash = "AQAAAAIAAYagAAAAEETZaCByV2cW6ewdBHIf5cD2LZvnF97vlF8jYrDa+2i8LUbJzwCl41ncenjnRMquIw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEIqgWAjrtEq9VQ9bcEk8wt3AnCYne4Ph3d6CBtdbk40jCCb+J6EE6DfU+cFtBFtsjg==",
                             PhoneNumber = "9876543210",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "58fb3d3b-d63b-4a03-9252-6219e158ba76",
+                            SecurityStamp = "ec7e17db-2832-4e3a-bc1c-19f48a6c7118",
                             TwoFactorEnabled = false,
                             UserName = "HR"
+                        },
+                        new
+                        {
+                            Id = "774a8f54-c054-4de6-9654-654321098755",
+                            AccessFailedCount = 0,
+                            Active = "Yes",
+                            ConcurrencyStamp = "a4cce839-239d-4314-846e-4b008ea66ddc",
+                            Email = "user@gmail.com",
+                            EmailConfirmed = false,
+                            FirstName = "User",
+                            IsLogged = false,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "user@gmail.com",
+                            NormalizedUserName = "User",
+                            PasswordHash = "AQAAAAIAAYagAAAAEPA1JfEzBECvFSgQmgxwMDreSSSajbHSlmBZ5cCzK6Rp8uXx+uXi1h+oIBGxK9FtkA==",
+                            PhoneNumber = "987452361",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "4ba90651-da4f-4fdf-bade-fdface8caf8e",
+                            TwoFactorEnabled = false,
+                            UserName = "User"
                         });
                 });
 
@@ -174,6 +222,13 @@ namespace Management.Data.Migrations
                             ConcurrencyStamp = "2",
                             Name = "HR",
                             NormalizedName = "Human Resource"
+                        },
+                        new
+                        {
+                            Id = "123013f0-5201-4317-abd8-c211f91b7123",
+                            ConcurrencyStamp = "3",
+                            Name = "User",
+                            NormalizedName = "User"
                         });
                 });
 
@@ -273,6 +328,11 @@ namespace Management.Data.Migrations
                         {
                             UserId = "554a8f54-c054-4de6-9654-654321098765",
                             RoleId = "c7b013f0-5201-4317-abd8-c211f91b7330"
+                        },
+                        new
+                        {
+                            UserId = "774a8f54-c054-4de6-9654-654321098755",
+                            RoleId = "123013f0-5201-4317-abd8-c211f91b7123"
                         });
                 });
 

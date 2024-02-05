@@ -12,6 +12,7 @@ namespace Management.Common
 
         public static string ErrorMessage = "An error occurred.";
         public static string Empty = "";
+        public static string EmailExists = "Email Already Exists !";
         public static string DataRequired = "Enter required Data";
         public static string ReTryPassword = "Could not Create the user. Re-try With Strong Password";
         public static string AlreadyExist = "User Already Exist";
@@ -22,6 +23,11 @@ namespace Management.Common
         public static string DontExist = "User Doesn't Exist!";
         public static string ResetPassword = "Reset password";
         public static string SuccessfullySet = "We're happy to inform you that your password has been changed. Please use your new credentials to log in.";
+        public static string SetPassword = "Set password";
+        public static string SetSuccessfull = "We're happy to inform you that your password has been created successfully. Please use your new credentials to log in.";
+        public static string InvalidToken = "Invalid Token";
+        public static string ValidEmail = "Please Enter Valid Email";
+
 
         #endregion Constants
     }

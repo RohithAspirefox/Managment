@@ -1,4 +1,4 @@
-using AutoMapper;
+   using AutoMapper;
 using Management.Common.Models;
 using Management.Data.AppDbContext;
 using Management.Data.AutoMapper;
@@ -44,6 +44,7 @@ namespace Management.WebAPI
             // DB services
             builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+
             //Identity Services
             //builder.Services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 
@@ -60,7 +61,13 @@ namespace Management.WebAPI
             builder.Services.AddScoped<IEmailService, EmailService>();
 
             builder.Services.AddControllers();
-
+            builder.Services.AddDistributedMemoryCache(); // Adds a default in-memory implementation of IDistributedCache
+            builder.Services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30); // Set your desired timeout
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
             // JWT services
             builder.Services.AddAuthentication(options =>
             {
@@ -113,7 +120,7 @@ namespace Management.WebAPI
             {
                 configuration.ReadFrom.Configuration(context.Configuration);
             });
-
+            builder.Services.AddSession();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -126,7 +133,7 @@ namespace Management.WebAPI
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseAuthorization();
-
+            app.UseSession();
             app.MapControllers();
 
             app.Run();

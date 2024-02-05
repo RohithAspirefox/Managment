@@ -30,8 +30,23 @@ namespace Management.Data.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
+                    b.Property<string>("Active")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("City")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DateOfJoining")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DocumentURL")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
@@ -43,6 +58,15 @@ namespace Management.Data.Migrations
 
                     b.Property<string>("FirstName")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Gender")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageURL")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("IsLogged")
+                        .HasColumnType("bit");
 
                     b.Property<string>("LastName")
                         .HasColumnType("nvarchar(max)");
@@ -97,17 +121,19 @@ namespace Management.Data.Migrations
                         {
                             Id = "b74ddd14-6340-4840-95c2-db12554843e5",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "e90bfb8e-913e-4f18-bc3d-a144833a00a5",
+                            Active = "Yes",
+                            ConcurrencyStamp = "5fb82f30-54bb-4d90-8e54-b21e15cc9390",
                             Email = "admin@gmail.com",
                             EmailConfirmed = false,
                             FirstName = "Admin",
+                            IsLogged = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "admin@gmail.com",
                             NormalizedUserName = "Admin",
-                            PasswordHash = "AQAAAAIAAYagAAAAEDhZI7IgmdVPzDyM/XAcLtGnFhHKbwaOj4u3JKdZRlJf2tYAviZvAz75lCyGN3BuAQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEG2Mgm4xF65gshyzYyzIbJeYdNpNVxZSXbE4GRj99TRpOZnczz8ZgRVZNRTlwkAI9w==",
                             PhoneNumber = "1234567890",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "6f67ee68-a9e8-47cd-9404-fb016604cda1",
+                            SecurityStamp = "5528d522-91f4-429d-b2a0-1a2d22d317c9",
                             TwoFactorEnabled = false,
                             UserName = "Admin"
                         },
@@ -115,17 +141,19 @@ namespace Management.Data.Migrations
                         {
                             Id = "554a8f54-c054-4de6-9654-654321098765",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "9402a057-dce3-4846-803e-1b115d7128c1",
+                            Active = "Yes",
+                            ConcurrencyStamp = "5e110e20-9c60-438e-bb2c-f6f7fad6e58d",
                             Email = "hr@gmail.com",
                             EmailConfirmed = false,
                             FirstName = "HR",
+                            IsLogged = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "hr@gmail.com",
                             NormalizedUserName = "HR",
-                            PasswordHash = "AQAAAAIAAYagAAAAEOP3CyZVzaZv+sHN2z3pNfC6yLHRFlfU/jfogJ/E1oGgwGKUtvNcYU6TZ1qSUCGSFw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEIqgWAjrtEq9VQ9bcEk8wt3AnCYne4Ph3d6CBtdbk40jCCb+J6EE6DfU+cFtBFtsjg==",
                             PhoneNumber = "9876543210",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "143b2c61-3020-45df-bf41-d8ce058d09b8",
+                            SecurityStamp = "ec7e17db-2832-4e3a-bc1c-19f48a6c7118",
                             TwoFactorEnabled = false,
                             UserName = "HR"
                         },
@@ -133,17 +161,19 @@ namespace Management.Data.Migrations
                         {
                             Id = "774a8f54-c054-4de6-9654-654321098755",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "9733440a-2a9b-4948-9215-9814781f79d9",
+                            Active = "Yes",
+                            ConcurrencyStamp = "a4cce839-239d-4314-846e-4b008ea66ddc",
                             Email = "user@gmail.com",
                             EmailConfirmed = false,
                             FirstName = "User",
+                            IsLogged = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "user@gmail.com",
                             NormalizedUserName = "User",
-                            PasswordHash = "AQAAAAIAAYagAAAAEMiz7a3rWl38q3aGH5sabiRhF1WZuU98DPwZcs3qoZs8JNP2Aa7IRu4RW+D89dAUBA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEPA1JfEzBECvFSgQmgxwMDreSSSajbHSlmBZ5cCzK6Rp8uXx+uXi1h+oIBGxK9FtkA==",
                             PhoneNumber = "987452361",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "a9b682c3-6efc-4042-b69e-81118758ab62",
+                            SecurityStamp = "4ba90651-da4f-4fdf-bade-fdface8caf8e",
                             TwoFactorEnabled = false,
                             UserName = "User"
                         });
