@@ -17,7 +17,13 @@ namespace Management.Common.Models
         public string? Address { get; set; }
 
         public string? City { get; set; }
-        public string? Active { get; set; } = "Yes";
+        public string? Active { get; set; }
+
+        public string? GithubURL { get; set; }
+        public string? InstagramURL { get; set; }
+        public string? FacebookURL { get; set; }
+        public string? TwitterURL { get; set; }
+
 
     }
 }

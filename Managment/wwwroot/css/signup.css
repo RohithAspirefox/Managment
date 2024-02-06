@@ -24,6 +24,15 @@
 }
 
 
+.container_user_details {
+    height: 150vh !important;
+    width: 100%;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+}
+
+
 
 .card {
     border-radius: 10px;
@@ -96,17 +105,18 @@
 
 
 .card_user_index {
+    margin-top: 300px;
     border-radius: 10px;
     box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.3);
     width: 700px;
-    height: 780px;
+    height: 1065px !important;
     background-color: #ffffff;
     padding: 10px 30px;
 }
 
 
 .card_title_button {
-   margin-left:150px;
+   margin-left:140px !important;
 }
 
 .card_email {
@@ -117,6 +127,8 @@
     background-color: #ffffff;
     padding: 10px 30px;
 }
+
+
 
 
 

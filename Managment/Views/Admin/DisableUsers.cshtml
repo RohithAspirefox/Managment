@@ -1,0 +1,133 @@
+﻿@model IEnumerable<Management.Common.Models.User>
+
+
+
+<div class="form-group">
+    <input type="text" id="searchInput" placeholder="Search..." />
+    <button class="btn btn-primary" onclick="search()">Search</button>
+</div>
+
+<table class="table">
+
+    <thead>
+        <tr>
+            <th>
+
+                @Html.DisplayNameFor(model => model.FirstName)
+                <a asp-action="DisableUsers" asp-route-Column="FirstName" asp-route-sort="asc" asp-route-page="@ViewBag.CurrentPage">▲</a>
+                <a asp-action="DisableUsers" asp-route-Column="FirstName" asp-route-sort="desc" asp-route-page="@ViewBag.CurrentPage">▼</a>
+            </th>
+            <th>
+
+                @Html.DisplayNameFor(model => model.LastName)
+                <a asp-action="DisableUsers" asp-route-Column="LastName" asp-route-sort="asc" asp-route-page="@ViewBag.CurrentPage">▲</a>
+                <a asp-action="DisableUsers" asp-route-Column="LastName" asp-route-sort="desc" asp-route-page="@ViewBag.CurrentPage">▼</a>
+            </th>
+            <th>
+
+                @Html.DisplayNameFor(model => model.Email)
+                <a asp-action="DisableUsers" asp-route-Column="Email" asp-route-sort="asc" asp-route-page="@ViewBag.CurrentPage">▲</a>
+                <a asp-action="DisableUsers" asp-route-Column="Email" asp-route-sort="desc" asp-route-page="@ViewBag.CurrentPage">▼</a>
+            </th>
+            <th>
+
+                @Html.DisplayNameFor(model => model.PhoneNumber)
+                <a asp-action="DisableUsers" asp-route-Column="PhoneNumber" asp-route-sort="asc" asp-route-page="@ViewBag.CurrentPage">▲</a>
+                <a asp-action="DisableUsers" asp-route-Column="PhoneNumber" asp-route-sort="desc" asp-route-page="@ViewBag.CurrentPage">▼</a>
+            </th>
+            <th>
+                Image
+            </th>
+            <th>
+                Active
+            </th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var user in ViewBag.Data as IEnumerable<Management.Common.Models.User>)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => user.FirstName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => user.LastName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => user.Email)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => user.PhoneNumber)
+                </td>
+                <td>
+                    <img src="~/images/@user.ImageURL" class="rounded-circle" height="60" width="80" asp-append-version="true" />
+                </td>
+                <td>
+                    @Html.ActionLink("Activate User", "ActivateUser", "Admin", new { id = user.Id }, new { @class = "btn btn-danger" })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<nav aria-label="Page navigation">
+
+    <ul class="pagination">
+
+        <div class="row">
+            <div class="col-md-6">
+        <li class="page-item @(ViewBag.CurrentPage == 1 ? "disabled" : "")">
+            <a class="page-link btn btn-primary" href="javascript:void(0);" onclick="changePage(@ViewBag.CurrentPage - 1)">Previous</a>
+        </li>
+        </div>
+        <div class="col-md-6">
+        <li class="page-item @(ViewBag.Count== 0 ? "disabled" : "")">
+            <a class="page-link btn btn-primary" onclick="loadMore()">Next-></a>
+        </li>
+        </div>
+        </div>
+
+
+
+        @for (int i = 1; i <= ViewBag.TotalPage; i++)
+        {
+            <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                <a class="page-link" href="javascript:void(0);" onclick="changePage(@i)">@i</a>
+            </li>
+        }
+    </ul>
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+
+<script>
+    function search() {
+        var search = $("#searchInput").val();
+        var sort = "@ViewBag.Sort";
+        var column = "@ViewBag.Column";
+        window.location.href = `/Admin/DisableUsers?page=1&search=${search}&sort=${sort}&column=${column}`;
+    }
+
+    function changePage(page) {
+        var search = "@ViewBag.Search";
+        var sort = "@ViewBag.Sort";
+        var column = "@ViewBag.Column";
+        window.location.href = `/Admin/DisableUsers?page=${page}&search=${search}&sort=${sort}&column=${column}`;
+    }
+
+    function loadMore() {
+        var nextPage = @ViewBag.CurrentPage + 1;
+        changePage(nextPage);
+    }
+</script>

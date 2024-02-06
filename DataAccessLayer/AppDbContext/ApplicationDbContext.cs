@@ -31,7 +31,8 @@ namespace Management.Data.AppDbContext
                 Email = "admin@gmail.com",
                 NormalizedEmail = "admin@gmail.com",
                 LockoutEnabled = false,
-                PhoneNumber = "1234567890",
+                PhoneNumber = "1234567890",   
+                Active="",
                 PasswordHash = new PasswordHasher<IdentityUser>().HashPassword(null, "Admin@123")
             };
             builder.Entity<User>().HasData(user);
@@ -46,6 +47,7 @@ namespace Management.Data.AppDbContext
                 NormalizedEmail = "hr@gmail.com",
                 LockoutEnabled = false,
                 PhoneNumber = "9876543210",
+                Active = "",
                 PasswordHash = new PasswordHasher<IdentityUser>().HashPassword(null, "HR@123")
             };
             builder.Entity<User>().HasData(hrUser);
@@ -60,6 +62,7 @@ namespace Management.Data.AppDbContext
                 NormalizedEmail = "user@gmail.com",
                 LockoutEnabled = false,
                 PhoneNumber = "987452361",
+                Active = "",
                 PasswordHash = new PasswordHasher<IdentityUser>().HashPassword(null, "user@123")
             };
             builder.Entity<User>().HasData(publicUser);

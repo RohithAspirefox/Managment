@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 using Management.Common.Models;
+using Management.Data.AppDbContext;
 using Management.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using System.Data.Entity;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
@@ -15,13 +17,15 @@ namespace Management.Services.Services
         private readonly SignInManager<User> _signInManager;
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
+        private readonly ApplicationDbContext _application;
 
-        public AccountRepository(UserManager<User> userManager, SignInManager<User> signInManager, IConfiguration configuration,IMapper mapper)
+        public AccountRepository(UserManager<User> userManager, SignInManager<User> signInManager, IConfiguration configuration,IMapper mapper,ApplicationDbContext application)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _configuration = configuration;
             _mapper = mapper;
+            _application = application;
         }
 
         public async Task<bool> CheckUserAsync(string Email)
@@ -44,9 +48,23 @@ namespace Management.Services.Services
             return false;
         }
 
+        public async Task<bool> UpdateUsersData(UserEdit UserDto)
+        {
+            var user = _application.Users.FirstOrDefault(emp => emp.Email == UserDto.Email.ToLower());
+
+            user = _mapper.Map<User>(UserDto);
+            _application.Entry(user).State = (Microsoft.EntityFrameworkCore.EntityState)EntityState.Modified;
+            await _application.SaveChangesAsync();
+           /* _application.Entry(user).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+
+            _application.SaveChanges();*/
+            return false;
+        }
+
+
+
         public async Task<bool> LoginUserAsync(LoginModelDto UserLogin)
         {
-
             var user = await _userManager.FindByEmailAsync(UserLogin.Email);
             if (user != null)
             {

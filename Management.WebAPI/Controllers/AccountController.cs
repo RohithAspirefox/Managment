@@ -10,6 +10,7 @@ using System.Linq.Expressions;
 using Management.Data.AppDbContext;
 using System.Data.Entity;
 using System.Linq;
+using Microsoft.Extensions.Logging;
 
 namespace Management.WebAPI.Controllers
 {
@@ -21,11 +22,13 @@ namespace Management.WebAPI.Controllers
         private readonly IEmailService _emailService;
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
+
+
         private readonly ILogger<AccountController> _logger;
         private readonly IConfiguration _configuration;
         private readonly IWebHostEnvironment _hostingEnvironment;
         private readonly ApplicationDbContext _applicationDbContext;
-        
+
 
         public AccountController(IAccountRepository accountRepository, UserManager<User> userManager, SignInManager<User> signInManager, IEmailService emailService, ILogger<AccountController> logger, IConfiguration configuration, IWebHostEnvironment webHostEnvironment, ApplicationDbContext applicationDbContext)
         {
@@ -47,7 +50,7 @@ namespace Management.WebAPI.Controllers
                 bool checkUser = await _accountRepository.CheckUserAsync(model.Email);
                 if (checkUser)
                 {
-                   
+
                     var createUser = await _accountRepository.SignUpUserAsync(model);
                     if (createUser)
                     {
@@ -65,7 +68,7 @@ namespace Management.WebAPI.Controllers
         }
 
         [HttpPost("Login")]
-        public async Task<IActionResult> Login(LoginModelDto model) 
+        public async Task<IActionResult> Login(LoginModelDto model)
         {
             try
             {
@@ -74,10 +77,10 @@ namespace Management.WebAPI.Controllers
                 {
                     string token = await _accountRepository.CreateTokenAsync(model.Email);
                     return Ok(new LoginResponse
-                    { 
+                    {
                         Success = true,
                         Token = token
-                    }) ; 
+                    });
                 }
                 _logger.LogError("{Email} {Constants}", model.Email, Constants.IncorrectCredentials);
                 return BadRequest(new LoginResponse { Success = false, Error = Constants.IncorrectCredentials });
@@ -89,11 +92,11 @@ namespace Management.WebAPI.Controllers
 
         }
 
-       
+
 
 
         [HttpPost("ForgetPassword")]
-        public async Task<IActionResult> ForgetPassword(ForgotPasswordDto forgotPasswordModel)       
+        public async Task<IActionResult> ForgetPassword(ForgotPasswordDto forgotPasswordModel)
         {
             try
             {
@@ -136,7 +139,7 @@ namespace Management.WebAPI.Controllers
                 {
                     // User does not exist, create a new user
                     user = new User { UserName = createPasswordModel.Email, Email = createPasswordModel.Email };
-                  
+
                     await _userManager.CreateAsync(user);
                     await _userManager.AddToRoleAsync(user, "User");
                     /*    bool checkUser = await _accountRepository.CheckUserAsync(createPasswordModel.Email);
@@ -158,6 +161,7 @@ namespace Management.WebAPI.Controllers
 
                     var content = await System.IO.File.ReadAllTextAsync(Path.Combine(_hostingEnvironment.ContentRootPath, "NavigateToSignUp.html"));
 
+                    content = content.Replace("{UserEmail}", createPasswordModel.Email);
                     content = content.Replace("{NavigateRoute}", callbackUrl);
                     var message = new Message(createPasswordModel.Email, Constants.SetPassword, content);
 
@@ -173,7 +177,7 @@ namespace Management.WebAPI.Controllers
                 });
 
             }
-            
+
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
@@ -211,7 +215,7 @@ namespace Management.WebAPI.Controllers
             }
         }
 
-
+  
 
 
 
@@ -238,13 +242,13 @@ namespace Management.WebAPI.Controllers
                     {
                         Message message = new Message(user.Email, Constants.ResetPassword, Constants.SuccessfullySet);
                         await _emailService.SendEmailAsync(message);
-                        return Ok(new BaseResponse{Message = Constants.ResetSuccessfull,Success = true,});
+                        return Ok(new BaseResponse { Message = Constants.ResetSuccessfull, Success = true, });
                     }
-                    return NotFound(new BaseResponse { Message = result?.Errors?.FirstOrDefault().Code , Success = false, });
+                    return NotFound(new BaseResponse { Message = result?.Errors?.FirstOrDefault().Code, Success = false, });
                 }
                 return NotFound(Constants.DontExist);
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 throw ex;
             }
@@ -304,5 +308,8 @@ namespace Management.WebAPI.Controllers
 
             return Ok(response);
         }
+
+     
+
     }
 }

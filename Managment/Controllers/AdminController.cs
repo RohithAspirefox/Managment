@@ -19,6 +19,7 @@ using System.Collections.Specialized;
 using Management.Common;
 using Management.Services.Services;
 using Newtonsoft.Json;
+using System.Drawing.Printing;
 
 namespace Management.Controllers
 {
@@ -53,7 +54,9 @@ namespace Management.Controllers
             }
             else
             {
+                
                 query = query.Where(user => user.Active == "Yes");
+                
             }
 
             var totalCount = query.Count();
@@ -99,6 +102,54 @@ namespace Management.Controllers
             return lambda;
         }
 
+
+        public IActionResult DisableUsers(int page = 1, int pageSize = 6, string? search = "", string? sort = "", string? column = "")
+        {
+            var query = _application.Users.AsQueryable();
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                query = query.Where(user =>
+                    user.Active == "No" &&
+                    (user.FirstName.Contains(search) || user.LastName.Contains(search) || user.Id.Contains(search))
+                );
+            }
+            else
+            {
+                query = query.Where(user => user.Active == "No");
+            }
+
+            var totalCount = query.Count();
+            var totalPage = (int)Math.Ceiling((decimal)totalCount / pageSize);
+
+            if (string.IsNullOrEmpty(column))
+            {
+                column = ""; // Provide a default sorting column
+                sort = "asc";
+            }
+
+            var orderByExpression = GetPropertyExpression(column);
+
+            query = sort == "asc" ? query.OrderBy(orderByExpression) : query.OrderByDescending(orderByExpression);
+            var data = query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            ViewBag.Data = data;
+            ViewBag.CurrentPage = page;
+            ViewBag.PageSize = pageSize;
+            ViewBag.Search = search;
+            ViewBag.Sort = sort;
+            ViewBag.Column = column;
+            ViewBag.TotalCount = totalCount;
+            ViewBag.Count = data.Count;
+            return View();
+        }
+
+
+
+
         public IActionResult Active(string id)
         {
             var user = _application.Users.Find(id);
@@ -110,11 +161,29 @@ namespace Management.Controllers
             return RedirectToAction("Index","Admin");
         }
 
+        
+        public IActionResult ActivateUser(string id)
+        {
+            var user = _application.Users.Find(id);
+            user.Active = "Yes";
+            _application.Entry(user).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+
+            _application.SaveChanges();
+
+            return RedirectToAction("DisableUsers", "Admin");
+        }
+
+
+
 
         public IActionResult Email()
         {
             return View();
         }
+
+
+      
+
 
         [HttpPost]
         public async Task<IActionResult> NavigateToSignUp(ForgotPasswordDto navigate)

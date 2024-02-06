@@ -189,6 +189,17 @@ namespace Management.Controllers
         }
 
 
+        public IActionResult LinkExpired()
+        {
+            return View();
+        }
+
+        public IActionResult ResetPasswordLinkExpired()
+        {
+            return View();
+        }
+
+
         [HttpGet]
         public IActionResult SetPassword(string token, string email)
         {
@@ -215,7 +226,7 @@ namespace Management.Controllers
                     var result = await _apiHelperService.PostAsync<BaseResponse>(ApiRoute.SetPassword, setPasswordDto);
                     if (result.Success && result != null)
                         return RedirectToAction("Login", "Account");
-                    ModelState.AddModelError(Constants.Empty, result.Message ?? Constants.ErrorMessage);
+                    return RedirectToAction("LinkExpired", "Account");
                 }
                 ModelState.AddModelError(Constants.Empty,Constants.Empty);
                 return View();
@@ -237,7 +248,7 @@ namespace Management.Controllers
                     var result = await _apiHelperService.PostAsync<BaseResponse>(ApiRoute.ResetPassword, resetPasswordDto);
                     if (result.Success && result!=null)
                         return RedirectToAction("Login", "Account");
-                    ModelState.AddModelError(Constants.Empty, result.Message ?? Constants.ErrorMessage);
+                    return RedirectToAction("ResetPasswordLinkExpired", "Account");
                 }
                 ModelState.AddModelError(Constants.Empty, Constants.DataRequired);
                 return View();
@@ -267,5 +278,26 @@ namespace Management.Controllers
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
             return role;
         }
+
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateUsers(UserEdit model)
+        {
+            try
+            {
+
+                var result = await _apiHelperService.PostAsync<BaseResponse>(ApiRoute.UpdateUsers, model);
+                    if (result.Success && result != null)
+                        return RedirectToAction("Login", "Account");
+                    return RedirectToAction("LinkExpired", "Account");
+                
+                /* ModelState.AddModelError(Constants.Empty, Constants.Empty);*/
+                return View();
+            }
+            catch (Exception ex)
+            { throw ex; }
+        }
+
+
     }
 }

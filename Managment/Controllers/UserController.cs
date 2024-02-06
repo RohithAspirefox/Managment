@@ -1,4 +1,5 @@
-﻿using Management.Common;
+﻿using AutoMapper;
+using Management.Common;
 using Management.Common.Models;
 using Management.Common.Models.ApiResponse;
 using Management.Data.AppDbContext;
@@ -25,36 +26,33 @@ namespace Management.Controllers
         private readonly ApplicationDbContext _application;
         public IApiHelperService _apiHelperService;
         private IWebHostEnvironment _webHostEnvironment;
-        
+      
 
-        public UserController(ApplicationDbContext application, IConfiguration configuration, IWebHostEnvironment webHostEnvironment, IApiHelperService apiHelperService)
+        public UserController(ApplicationDbContext application, IConfiguration configuration, IWebHostEnvironment webHostEnvironment, IApiHelperService apiHelperService )
         {
             _application = application;
             _apiHelperService = apiHelperService;
             _webHostEnvironment = webHostEnvironment;
-            
+           
         }
 
         [HttpGet]
         public IActionResult Index()
         {
-            /*            var userCheck = await _userManager.FindByEmailAsync(Email);
-            */
+     
             var userEmail = HttpContext.Session.GetString("UserId");
            var user = _application.Users.FirstOrDefault(emp => emp.Email == userEmail.ToLower());
             UserEdit userEdit = new UserEdit();
             userEdit.Email = user.Email;
            
             ViewBag.Image = user.ImageURL;
-            //  ViewBag.Data = user;
+           
             return View(userEdit);
         }
-        
+
         [HttpPost]
         public IActionResult UpdateUsers(UserEdit model)
         {
-
-
             string uniqueFileName = UploadedFile(model);
 
             var user = _application.Users.FirstOrDefault(emp => emp.Email == model.Email.ToLower());
@@ -64,7 +62,13 @@ namespace Management.Controllers
             user.City = model.City;
             user.PhoneNumber = model.Mobile;
             user.ImageURL = uniqueFileName;
+            user.GithubURL = model.Github;
+            user.FacebookURL = model.Facebook;
+            user.TwitterURL = model.Twitter;
+            user.InstagramURL = model.Instagram;
             user.IsLogged = true;
+            user.Active = "Yes";
+
             _application.Entry(user).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
 
             _application.SaveChanges();
@@ -107,6 +111,10 @@ namespace Management.Controllers
             userEdit.Email = user.Email;
             userEdit.Address = user.Address;
             userEdit.Mobile = user.PhoneNumber;
+            userEdit.Github = user.GithubURL;
+            userEdit.Facebook = user.FacebookURL;
+            userEdit.Twitter = user.TwitterURL;
+            userEdit.Instagram = user.InstagramURL;
             ViewBag.Image = user.ImageURL;
             ViewBag.User=user.Id;
             return View(userEdit);

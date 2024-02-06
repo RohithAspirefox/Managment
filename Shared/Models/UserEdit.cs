@@ -34,19 +34,27 @@ namespace Management.Common.Models
 
 
         [Display(Name = "City")]
-        public string City { get; set; }
+        public string? City { get; set; }
 
       
         [Required(ErrorMessage = "Please choose profile image")]
         [Display(Name = "Profile Picture")]
         public IFormFile ProfileImage { get; set; }
 
-        [Required(ErrorMessage = "Please Enter Date Of Joining")]
+       
         [Display(Name = "DateOfJoining")]
-        public DateTime DateOfJoining { get; set; }
+        public DateTime? DateOfJoining { get; set; }
 
+        [Display(Name = "Enter Github Url")]
+        public string? Github { get; set; }
 
+        [Display(Name = "Enter Instagram Url")]
+        public string? Instagram { get; set; }
 
+        [Display(Name = "Enter Facebook Url")]
+        public string? Facebook { get; set; }
 
+        [Display(Name = "Enter Twitter Url")]
+        public string? Twitter { get; set; }
     }
 }

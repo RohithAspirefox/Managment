@@ -2,25 +2,19 @@
 @*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
+
 @{
     Layout = "_accountLayout";
 }
 
-@* <div class="form-group">
-    <label asp-for="ProfileImage" class="control-label"></label>
-    <div class="custom-file">
-        <input asp-for="ProfileImage" class="custom-file-input" id="customFile">
-        <label class="custom-file-label" for="customFile">Choose file</label>
-    </div>
-    <span asp-validation-for="ProfileImage" class="text-danger"></span>
-</div> *@
+
 
 
 
 <link href="~/css/signup.css" rel="stylesheet" />
 
-<div class="container">
-    <div class="card_user_index">
+<div class="container_user_details" >
+    <div class="card_user_index" style="height:1065px">
         <div class="card_title">
 
             <div class="btn btn-success">Please Fill your deatils </div>
@@ -30,82 +24,69 @@
             <form enctype="multipart/form-data" asp-action="UpdateUsers" method="post">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <div>
-                <label asp-for="@Model.FirstName"></label>
-                <input asp-for="@Model.FirstName" type="text" name="FirstName" id="FirstName" placeholder="FirstName" />
-                <span asp-validation-for="@Model.FirstName" class="text-danger"></span>
+                    <label asp-for="@Model.FirstName"></label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span asp-validation-for="@Model.FirstName" class="text-danger"></span>
+                    <input asp-for="@Model.FirstName" type="text" name="FirstName" id="FirstName" placeholder="FirstName" /> 
+                    
                 </div>
 
                 <div>
-                <label asp-for="@Model.LastName"></label>
-                    <input asp-for="@Model.LastName" type="text" name="LastName" id="LastName" placeholder="LastName" />
-                <span asp-validation-for="@Model.LastName" class="text-danger"></span>
+                    <label asp-for="@Model.LastName"></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span asp-validation-for="@Model.LastName" class="text-danger"></span>
+                    <input asp-for="@Model.LastName" type="text" name="LastName" id="LastName" placeholder="LastName" /> 
+                    
                 <div>
 
 
                 <div>
-                <label asp-for="@Model.Email"></label>
-                <input asp-for="@Model.Email" type="email" name="Email" placeholder="" id="Email" readonly/>
-                <span asp-validation-for="@Model.Email" class="text-danger"></span>
+                    <label asp-for="@Model.Email"></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <span asp-validation-for="@Model.Email" class="text-danger"></span>
+                    <input asp-for="@Model.Email" type="email" name="Email" placeholder="" id="Email" readonly />
+
                 <div>
 
 
                 <div>
-                <label asp-for="@Model.Address"></label>
-                <input asp-for="@Model.Address" type="text" name="Address" placeholder="" id="Address" />
-                <span asp-validation-for="@Model.Address" class="text-danger"></span>
+                     <label asp-for="@Model.Address"></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span asp-validation-for="@Model.Address" class="text-danger"></span>
+                    <input asp-for="@Model.Address" type="text" name="Address" placeholder="" id="Address" />
+                 
+               
                 </div>
 
                  <div>
-                <label asp-for="@Model.Mobile"></label>
-                <input asp-for="@Model.Mobile" type="text" name="Mobile" id="Mobile" placeholder="PhoneNumber" />
-                <span asp-validation-for="@Model.Mobile" class="text-danger"></span>
+                       <label asp-for="@Model.Mobile"></label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp; <span asp-validation-for="@Model.Mobile" class="text-danger"></span>
+                      <input asp-for="@Model.Mobile" type="text" name="Mobile" id="Mobile" placeholder="PhoneNumber" />
+                      
                  </div>
 
-                                @* <label asp-for="RegisterDate" class="control-label"></label>
-                                <input asp-for="RegisterDate" id="datepicker" type="text" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-ddThh:mm")" />
-                                <span asp-validation-for="RegisterDate" class="text-danger"></span> *@
-
                 <div>
-@*                 <label asp-for="@Model.DateOfJoining"></label> *@
-@*                 <input type="text" id="txtSelectedDate" name="SelectedDate" readonly="readonly" />
- *@
-@*                                     <input asp-for="@Model.DateOfJoining" type="text" name="DateOfJoining" id="DateOfJoining" value="@DateTime.Now.ToString("MM/dd/yyyy")" placeholder="DateOfJoining" />
-                <span asp-validation-for="@Model.DateOfJoining" class="text-danger"></span>
-                </div> *@
-@*
-                
-                
-                
-                <label asp-for="@Model.ProfileImage"></label>
-                <input asp-for="@Model.ProfileImage" type="file" required="required" name="file" id="file" />
-                <span asp-validation-for="@Model.ProfileImage" class="text-danger"></span> *@
-
-
-           @*      <label asp-for="@Model.ProfileImage" class="control-label"></label>
-                    <div class="custom-file">
-                    <input asp-for="@Model.ProfileImage" class="custom-file-input" id="ProfileImage">
-                   
-                    <label class="custom-file-label" for="ProfileImage">Choose file</label>
-                    </div>
-                <span asp-validation-for="@Model.ProfileImage" class="text-danger"></span> *@
-          @*    
-                <label asp-for="@Model.ProfileImage"></label>
-                <input asp-for="@Model.ProfileImage" type="file" required="required" name="file" id="file" /> *@
-
-
-
-                <div>
-                <label asp-for="@Model.ProfileImage" class="control-label"></label>
-                <input asp-for="@Model.ProfileImage" class="custom-file-input" id="ProfileImage" name="ProfileImage">
-                <span asp-validation-for="@Model.ProfileImage" class="text-danger"></span>
+                    <label asp-for="@Model.ProfileImage" class="control-label"></label> &nbsp;&nbsp;&nbsp;&nbsp <span asp-validation-for="@Model.ProfileImage" class="text-danger"></span>
+                    <input asp-for="@Model.ProfileImage" class="custom-file-input" id="ProfileImage" name="ProfileImage">
+                    
                 </div>
 
+                <div>
+                    <label asp-for="@Model.Github"></label>
+                     <input asp-for="@Model.Github" type="text" name="Github" id="Github" placeholder="Enter Github Link" />
+                   
+                </div>
 
+                 <div>
+                     <label asp-for="@Model.Instagram"></label>
+                     <input asp-for="@Model.Instagram" type="text" name="Instagram" id="Instagram" placeholder="Enter Instagram Link" />
+                     
+                  </div>
 
+                  <div>
+                      <label asp-for="@Model.Facebook"></label>
+                      <input asp-for="@Model.Facebook" type="text" name="Facebook" id="Facebook" placeholder="Enter Facebook Link" />
+                      
+                   </div>
 
-       @*          <div class="btn btn-success">Please Fill your deatils </div> *@
+                  <div>
+                      <label asp-for="@Model.Twitter"></label>
+                      <input asp-for="@Model.Twitter" type="text" name="Twitter" id="Twitter" placeholder="Enter Twitter Link" />
+                     
+                  </div>
 
-                 <div class="card_title_button">
+                 <div class="card_title">
                      <button type="submit">Save Changes</button>
                  </div>
               
@@ -113,9 +94,9 @@
         </div>
 
     </div>
+
+
 </div>
-
-
 
 
 

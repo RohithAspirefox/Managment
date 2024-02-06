@@ -11,5 +11,7 @@ namespace Management.Services.Interfaces
         Task<bool> LoginUserAsync(LoginModelDto loginDto);
 
         Task<string> CreateTokenAsync(string Email);
+
+        Task<bool> UpdateUsersData(UserEdit userDto);
     }
 }
