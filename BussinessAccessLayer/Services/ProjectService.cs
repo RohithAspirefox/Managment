@@ -64,10 +64,10 @@ namespace Management.Services.Services
             }
             await SaveFileAsync(projectDto.Logo, localPath, projectEntity, DocumentType.Logo);
             await SaveFileAsync(projectDto.Documentation, localPath, projectEntity, DocumentType.Documentation);
-            
+
             appDbContext.Projects.Add(projectEntity);
             await appDbContext.SaveChangesAsync();
-            
+
             return Constants.Created;
         }
 
@@ -96,29 +96,14 @@ namespace Management.Services.Services
                 {
                     await file.CopyToAsync(fileStream);
                 }
-                var document = project.Documents.Where(x => x.ProjectEntityId == project.Id && x.DocumentType == docType).FirstOrDefault();
-                if (document == null)
-                {
-                    document = new Document
-                    {
-                        ProjectEntityId = project.Id,
-                        DocumentType = docType,
-                        FileName = fileName,
-                        FilePath = filePath
-                    };
-                    project.Documents.Add(document);
-                }
 
                 string urlPath = null;
                 if (_httpContextAccessor != null)
                 {
                     urlPath = $"{_httpContextAccessor?.HttpContext?.Request.Scheme}://{_httpContextAccessor?.HttpContext?.Request.Host}{_httpContextAccessor?.HttpContext?.Request.PathBase}/Images/{fileName}";
                 }
-
-                document.FilePath = urlPath;
-
-                appDbContext.Projects.Update(project);
-                await appDbContext.SaveChangesAsync();
+                project.Documents.Add(new Document { FilePath = urlPath, DocumentType = docType ,FileName=fileName});
+                                          
 
             }
         }
@@ -131,7 +116,7 @@ namespace Management.Services.Services
         public async Task<List<ProjectEntity>> GetAllProjects()
         {
             return await appDbContext.Projects.Include(p => p.Documents).Include(p => p.UserProject).ThenInclude(u => u.User)
-            .Include(p => p.TechStackUsed).Include(p=>p.UserProject).ThenInclude(u=>u.User)
+            .Include(p => p.TechStackUsed).Include(p => p.UserProject).ThenInclude(u => u.User)
             .ToListAsync();
         }
 

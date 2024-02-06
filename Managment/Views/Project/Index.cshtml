@@ -4,9 +4,8 @@
 }
 <head>
     <link href="resources/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/0ace76c9cd.js" crossorigin="anonymous"></script>
 </head>
-
-
 
 <h1>Create New Project here.</h1>
 <br />
@@ -14,6 +13,15 @@
 <a asp-action="Add" asp-controller="Project" class="btn btn-primary">Add Project</a>
 <br />
 <br />
+
+<style>
+    .custom-snapshot-img {
+        width: 159.98px;
+        height: 94.21px;
+        object-fit: cover;
+    }
+</style>
+
 
 
 <form asp-action="Search" method="get">
@@ -29,92 +37,126 @@
 
 @model Management.Common.Models.DTO.PaginatedList<Management.Common.Models.DTO.ProjectDto>
 
-<table class="table" style="border-collapse: separate;border-spacing: 14px 8px;">
-    <thead>
-        <tr>
-            <th>Logo</th>
-            <th >
-                <span>Name</span>
-                    <a asp-action="Index" asp-route-sortField="Name" asp-route-sortOrder="asc">▲</a>
-                    <a asp-action="Index" asp-route-sortField="Name" asp-route-sortOrder="desc">▼</a>
-            </th>
-            <th >
-                <span>StartDate</span>
-                    <a asp-action="Index" asp-route-sortField="StartDate" asp-route-sortOrder="asc">▲</a>
-                    <a asp-action="Index" asp-route-sortField="StartDate" asp-route-sortOrder="desc">▼</a>
-            </th>
-            <th>
-                <span>Status</span>
-                    <a asp-action="Index" asp-route-sortField="Status" asp-route-sortOrder="asc">▲</a>
-                    <a asp-action="Index" asp-route-sortField="Status" asp-route-sortOrder="desc">▼</a>
-            </th>
-            <th>Description</th>
-            <th>DevelopmentName</th>
-            <th>DevelopmentUrl</th>
-            <th>StageName</th>
-            <th>StageUrl</th>
-            <th>ProductionName</th>
-            <th>ProductionUrl </th>
-            <th>Documentation</th>
-            <th>SnapShoots</th>
-            <th>TechStackUsed</th>
-            <th>Developers</th>
-            <th>Action</th>
-    </thead>
-    <tbody>
+<div class="container-fluid">
+    <div>
         @if (Model.Items.Any())
         {
             @foreach (var project in Model.Items)
             {
-                <tr>
-                    <td><img src="@project.LogoUrl" width="100" height="100"></td>
-                    <td>@project.Name</td>
-                    <td>@project.StartDate.ToShortDateString()</td>
-                    <td>@project.Status</td>
-                    <td>@project.Description</td>
-                    <td>@project.DevelopmentName</td>
-                    <td>@project.DevelopmentUrl</td>
-                    <td>@project.StageName</td>
-                    <td>@project.StageUrl</td>
-                    <td>@project.ProductionName</td>
-                    <td>@project.ProductionUrl</td>
-                    <td><img src="@project.DocumentationUrl" alt="Pdf Uploaded Here" width="100" height="100"></td>
+                <div class="row mb-4">
+                    <!-- 1st Row -->
+                    <div class="col-md-4 mt-2">
+                        <img src="@project.LogoUrl" class="card-img img-fluid" alt="Project Logo">
+                    </div>
+                    <div class="col-md-4 mt-2">
+                        <div class="card-body">
+                            <h5 class="card-title">@project.Name</h5>
+                            <p class="card-text">@project.Description</p>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item"><strong>Start Date:</strong> @project.StartDate.ToShortDateString()</li>
+                                <li class="list-group-item"><strong>Status:</strong> @project.Status</li>
+                                <li class="list-group-item"><strong>Development Name:</strong> @project.DevelopmentName</li>
+                                <li class="list-group-item"><strong>Development URL:</strong> @project.DevelopmentUrl</li>
+                                <li class="list-group-item"><strong>Stage Name:</strong> @project.StageName</li>
+                                <li class="list-group-item"><strong>Stage URL:</strong> @project.StageUrl</li>
+                                <li class="list-group-item"><strong>Production Name:</strong> @project.ProductionName</li>
+                                <li class="list-group-item"><strong>Production URL:</strong> @project.ProductionUrl</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mt-2">
+                        <div class="card-body">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">
+                                    <strong>Documentation:</strong>
+                                    <a href="@project.DocumentationUrl" target="_blank">
+                                        <img src="@project.DocumentationUrl" class="img-thumbnail img-fluid" alt="Documentation">
+                                    </a>
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>Snapshots:</strong>
+                                    <div class="row">
+                                        @foreach (var snapshot in project.SnapShootsUrl)
+                                        {
+                                            <div class="col-md-6">
+                                                <a href="@snapshot" target="_blank">
+                                                    <img src="@snapshot" class="img-thumbnail custom-snapshot-img" alt="Snapshot">
+                                                </a>
+                                            </div>
+                                        }
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
 
-                    <td>
-                        @foreach (var techStack in project.SnapShootsUrl)
-                        {
-                            <img src="@techStack" width="100" height="100">
-                        }
-                    </td>
-                  
-                    <td>
-                        @foreach (var techStack in project.TechStackUsed)
-                        {
-                            <p>@techStack</p>
-                        }
-                    </td>
-                    <td>
-                        @foreach (var developer in project.Developers)
-                        {
-                            <p>@developer</p>
-                        }
-                    </td>
-                    <td style="display:flex">
-                        <a style="margin-right: 6px" class="btn btn-primary" href="@Url.Action("Update", "Project", new { id = project.ProjectId })">Edit</a>
-                        <a style="margin-right: 6px" class="btn btn-danger" href="@Url.Action("Delete", "Project", new { id = project.ProjectId })">Delete</a>
-                    </td>
-                </tr>
+                    <!-- 2nd Row -->
+                    <div class="col-md-6 mt-2">
+                        <div class="card-body">
+                            <li class="list-group-item">
+                                <strong>Tech Stack Used:</strong>
+                                @foreach (var techStack in project.TechStackUsed)
+                                {
+                                    <p>@techStack</p>
+                                }
+                            </li>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mt-2">
+                        <div class="card-body">
+                            <li class="list-group-item">
+                                <strong>Developers:</strong>
+                                @foreach (var developer in project.Developers)
+                                {
+                                    <p>@developer</p>
+                                }
+                            </li>
+                        </div>
+                    </div>
+
+                    <!-- 3rd Row -->
+                    <div class="col-md-12 mt-2">
+                        <div class="card-footer">
+                            <div class="btn-group">
+                                <a href="@Url.Action("Update", "Project", new { id = project.ProjectId })" class="btn btn-light">
+                                    <i class="fa-solid fa-pencil"></i> Edit
+                                </a>
+                                <button class="btn btn-light" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                    <i class="fa-solid fa-trash"></i> Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Delete Confirmation Modal -->
+                    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="deleteModalLabel">Delete Confirmation</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    Are you sure you want to delete this project?
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    <a href="@Url.Action("Delete", "Project", new { id = project.ProjectId })" class="btn btn-danger">Delete</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             }
         }
         else
         {
-            <tr>
-                <td colspan="13">No projects found.</td>
-            </tr>
+            <div class="col-12">
+                <p>No projects found.</p>
+            </div>
         }
-        
-    </tbody>
-</table>
+    </div>
+</div>
 
 <div>
     <nav aria-label="Page navigation">
@@ -130,3 +172,5 @@
         </ul>
     </nav>
 </div>
+
+

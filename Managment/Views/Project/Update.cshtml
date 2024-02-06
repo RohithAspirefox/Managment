@@ -26,148 +26,167 @@
 
 <h1>Update Project here</h1>
 
-<form id="formData">
-    <div class="form-group">
-        <label asp-for="Logo"></label>
-        <br />
-        <input id="FileUpload1" class="btn btn-secondary" value="ViewBag.Logo" type="file" asp-for="Logo" />
-        @if (ViewBag.Logo != null)
-        {
-            <p>Selected Logo: <a href="@ViewBag.Logo" target="_blank">@ViewBag.Logo</a></p>
-        }
-        <input id="ProjectId" hidden type="text" asp-for="ProjectId" />
+<div class="container-fluid" style="margin-top: 50px;">
+    <div class="container" style="border: 2px solid #ccc; padding: 20px; border-radius: 10px; background-color: #F8F4EC;">
+        <form id="formData">
+            <div class="col-md-12 mb-4" style="margin-top: 55px;">
+                <div class="row no-gutters" style="margin-top: -50px;margin-bottom: 40px;">
+                    <div class="col-4 mt-2">
+                        <div class="form-group">
+                            <label asp-for="Logo"></label>
+                            <br />
+                            <input id="FileUpload1" class="btn btn-secondary" value="ViewBag.Logo" type="file" asp-for="Logo" />
+                            @if (ViewBag.Logo != null)
+                            {
+                                <p>Selected Logo: <a href="@ViewBag.Logo" target="_blank">@ViewBag.Logo</a></p>
+                            }
+                            <input id="ProjectId" hidden type="text" asp-for="ProjectId" />
 
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Name"></label>
+                            <input asp-for="Name" id="Name" class="form-control" value="@Model.Name" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+
+                        <label asp-for="Developers">Developers</label>
+                        <select asp-for="Developers" class="form-control" name="Developers" type="text" id="DevTags" multiple>
+                            @{
+                                var selectedValuess = Model.Developers
+                                .SelectMany(ts => ts.Split(","))
+                                .ToList();
+
+                                var exeUsers = ViewBag.Users;
+
+                                foreach (var dev in exeUsers)
+                                {
+                                    if (selectedValuess.Any(x => x == dev.Text))
+                                    {
+                                        <option value="@dev.Value" selected="true">@dev.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@dev.Value">@dev.Text</option>
+                                    }
+                                }
+                            }
+                        </select>
+
+
+                        <div class="form-group">
+                            <label asp-for="StartDate"></label>
+                            <input type="date" asp-for="StartDate" id="StartDate" class="form-control" value="@Model.StartDate.ToString("yyyy-MM-dd")" />
+                            <span asp-validation-for="StartDate" class="text-danger"></span>
+                        </div>
+
+
+                        <label asp-for="Status"></label>
+                        @Html.DropDownListFor(model => model.Status, ViewBag.Statuses as SelectList, new { @class = "form-control" })
+
+
+
+                        <div class="form-group">
+                            <label asp-for="Description "></label>
+                            <input asp-for="Description " id="Description" class="form-control" value="@Model.Description" />
+                            <span asp-validation-for="Description " class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-4 mt-2">
+                        <label asp-for="TechStackUsed">TechStackUsed</label>
+                        <select asp-for="TechStackUsed" class="form-control" name="TechStackUsed" type="text" id="txttags" data-role="tagsinput" multiple>
+                            @{
+                                var selectedValues = Model.TechStackUsed
+                                .SelectMany(ts => ts.Split(","))
+                                .ToList();
+
+                                foreach (var techStack in selectedValues)
+                                {
+                                    <option value="@techStack" selected="true">@techStack</option>
+                                }
+                            }
+                        </select>
+
+
+
+                        <div class="form-group">
+                            <label asp-for="Documentation"></label>
+                            <br />
+                            <input id="FileUpload2" class="btn btn-secondary" type="file" asp-for="Documentation" />
+                            @if (ViewBag.Documentation != null)
+                            {
+                                <p>
+                                    Selected Documentation: <a href="@ViewBag.Documentation" target="_blank">@ViewBag.Documentation</a>
+                                    <button type="button" class="close" aria-label="Close" onclick="deleteDocumentation('@ViewBag.Documentation')">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </p>
+                            }
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="SnapShoots"></label>
+                            <br />
+                            <input id="FileUpload3" class="btn btn-secondary" type="file" asp-for="SnapShoots" multiple />
+                            @if (ViewBag.SnapShoot != null)
+                            {
+                                foreach (var item in ViewBag.SnapShoot)
+                                {
+                                    <p>
+                                        Selected SnapShoot: <a href="@item" target="_blank">@item</a>
+                                        <button type="button" class="close" aria-label="Close" onclick="deleteSnapShoot('@item')">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </p>
+                                }
+                            }
+                        </div>
+                    </div>
+
+                    <div class="col-4 mt-2">
+                        <div class="form-group">
+                            <label asp-for="DevelopmentName  "></label>
+                            <input asp-for="DevelopmentName  " id="DevelopmentName" class="form-control" value="@Model.DevelopmentName" />
+                            <span asp-validation-for="DevelopmentName  " class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="DevelopmentUrl  "></label>
+                            <input asp-for="DevelopmentUrl  " id="DevelopmentUrl" class="form-control" value="@Model.DevelopmentUrl" />
+                            <span asp-validation-for="DevelopmentUrl  " class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="StageName  "></label>
+                            <input asp-for="StageName  " id="StageName" class="form-control" value="@Model.StageName" />
+                            <span asp-validation-for="StageName  " class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="StageUrl   "></label>
+                            <input asp-for="StageUrl   " id="StageUrl" class="form-control" value="@Model.StageUrl" />
+                            <span asp-validation-for="StageUrl   " class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="ProductionName   "></label>
+                            <input asp-for="ProductionName   " id="ProductionName" class="form-control" value="@Model.ProductionName" />
+                            <span asp-validation-for="ProductionName   " class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="ProductionUrl   "></label>
+                            <input asp-for="ProductionUrl   " id="ProductionUrl" class="form-control" value="@Model.ProductionUrl" />
+                            <span asp-validation-for="ProductionUrl   " class="text-danger"></span>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <button id="submitBtn" style="border-radius:10px;padding:10px;background-color:#AC7D88" type="button">Update</button>
+                        <button id="cancelBtn" style="border-radius:10px;margin-top:12px; padding:10px;margin-bottom:-40px;" type="button">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
     </div>
-
-    <div class="form-group">
-        <label asp-for="Name"></label>
-        <input asp-for="Name" id="Name" class="form-control" value="@Model.Name" />
-        <span asp-validation-for="Name" class="text-danger"></span>
-    </div>
-
-    <label asp-for="Developers">Developers</label>
-    <select asp-for="Developers"  class="form-control" name="Developers" type="text" id="DevTags" multiple>
-        @{
-            var selectedValuess = Model.Developers
-            .SelectMany(ts => ts.Split(","))
-            .ToList();
-
-            var exeUsers = ViewBag.Users;
-
-            foreach (var dev in exeUsers)
-            {
-                if (selectedValuess.Any(x => x == dev.Text))
-                {
-                    <option value="@dev.Value" selected="true">@dev.Text</option>
-                }
-                else
-                {
-                    <option value="@dev.Value">@dev.Text</option>
-                }
-            }
-        }
-    </select>
-
-
-    <div class="form-group">
-        <label asp-for="StartDate"></label>
-        <input type="date" asp-for="StartDate" id="StartDate" class="form-control" value="@Model.StartDate.ToString("yyyy-MM-dd")" />
-        <span asp-validation-for="StartDate" class="text-danger"></span>
-    </div>
-
-    
-    <label asp-for="Status"></label>
-    @Html.DropDownListFor(model => model.Status, ViewBag.Statuses as SelectList, new { @class = "form-control" })
-
-
-
-    <div class="form-group">
-        <label asp-for="Description "></label>
-        <input asp-for="Description " id="Description" class="form-control" value="@Model.Description" />
-        <span asp-validation-for="Description " class="text-danger"></span>
-    </div>
-
-
-    <label asp-for="TechStackUsed">TechStackUsed</label>
-    <select asp-for="TechStackUsed" class="form-control" name="TechStackUsed" type="text" id="txttags" data-role="tagsinput" multiple>
-        @{
-            var selectedValues = Model.TechStackUsed
-            .SelectMany(ts => ts.Split(","))
-            .ToList();
-
-            foreach (var techStack in selectedValues)
-            {
-               <option value="@techStack" selected="true">@techStack</option>
-            }
-        }
-    </select>
-
-
-
-    <div class="form-group">
-        <label asp-for="Documentation"></label>
-        <br />
-        <input id="FileUpload2" class="btn btn-secondary" type="file" asp-for="Documentation" />
-        @if (ViewBag.Documentation != null)
-        {
-            <p>Selected Documentation: <a href="@ViewBag.Documentation" target="_blank">@ViewBag.Documentation</a>
-                <button type="button" class="close" aria-label="Close" onclick="deleteDocumentation('@ViewBag.Documentation')">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </p>
-        }
-    </div>
-
-    <div class="form-group">
-        <label asp-for="SnapShoots"></label>
-        <br />
-        <input id="FileUpload3" class="btn btn-secondary" type="file" asp-for="SnapShoots" multiple />
-        @if (ViewBag.SnapShoot != null)
-        {
-            foreach (var item in ViewBag.SnapShoot)
-            {
-                <p>Selected SnapShoot: <a href="@item" target="_blank">@item</a>
-                    <button type="button" class="close" aria-label="Close" onclick="deleteSnapShoot('@item')">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </p>
-            }
-        }
-    </div>
-
-    <div class="form-group">
-        <label asp-for="DevelopmentName  "></label>
-        <input asp-for="DevelopmentName  " id="DevelopmentName" class="form-control" value="@Model.DevelopmentName" />
-        <span asp-validation-for="DevelopmentName  " class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="DevelopmentUrl  "></label>
-        <input asp-for="DevelopmentUrl  " id="DevelopmentUrl" class="form-control" value="@Model.DevelopmentUrl" />
-        <span asp-validation-for="DevelopmentUrl  " class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="StageName  "></label>
-        <input asp-for="StageName  " id="StageName" class="form-control" value="@Model.StageName" />
-        <span asp-validation-for="StageName  " class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="StageUrl   "></label>
-        <input asp-for="StageUrl   " id="StageUrl" class="form-control" value="@Model.StageUrl" />
-        <span asp-validation-for="StageUrl   " class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="ProductionName   "></label>
-        <input asp-for="ProductionName   " id="ProductionName" class="form-control" value="@Model.ProductionName" />
-        <span asp-validation-for="ProductionName   " class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="ProductionUrl   "></label>
-        <input asp-for="ProductionUrl   " id="ProductionUrl" class="form-control" value="@Model.ProductionUrl" />
-        <span asp-validation-for="ProductionUrl   " class="text-danger"></span>
-    </div>
-    <br />
-    <button id="submitBtn" type="button" class="btn btn-primary">Update</button>
-</form>
+</div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/bootstrap.tagsinput/0.4.2/bootstrap-tagsinput.min.js"></script>
@@ -182,6 +201,13 @@
 </script>
 
 <script>
+    debugger;
+    document.getElementById("cancelBtn").addEventListener("click", function () {
+        debugger;
+        window.location.href = "/Project/Index";
+    });
+
+
     let existingSnapShoots = @Html.Raw(Json.Serialize(ViewBag.SnapShoot));
     let existingDocuments = @Html.Raw(Json.Serialize(ViewBag.Documentation));
 
@@ -206,7 +232,7 @@
         $(`p:contains('${snapShootPath}')`).remove();
 
         existingSnapShoots.splice(existingSnapShoots.indexOf(snapShootPath), 1);
-        
+
         console.log('SnapShoot removed from UI and existingSnapShoots!');
         console.log(existingSnapShoots);
 
