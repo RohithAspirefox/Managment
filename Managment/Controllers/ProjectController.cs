@@ -26,12 +26,18 @@ namespace Management.Controllers
             _apiHelperService = apiHelperService;
         }
 
-        public async Task<IActionResult> Index(int? page, string sortField, string sortOrder)
+        public async Task<IActionResult> Index(Guid id)
         {
-            const int pageSize = 2;
+            var result = await _apiHelperService.PostAsyncUpdateDeleteData<ProjectDto>(ApiRoute.UpdateProject, id);
+            return View(result);
+        }
+
+        public async Task<IActionResult> ListView(int? page, string sortField, string sortOrder)
+        {
+            const int pageSize = 50;
 
             var searchResultsJson = HttpContext.Session.GetString("SearchResults");
-            var value=HttpContext.Session.GetString("SearchValue");
+            var value = HttpContext.Session.GetString("SearchValue");
 
             if (!string.IsNullOrEmpty(searchResultsJson) && !string.IsNullOrEmpty(value))
             {
@@ -50,7 +56,7 @@ namespace Management.Controllers
             }
 
             var allResults = await _apiHelperService.GetAsync<List<ProjectDto>>(ApiRoute.GetAllProject);
-            
+
             int totalPages;
             if (page == null)
             {
@@ -94,13 +100,13 @@ namespace Management.Controllers
                 var result = await _apiHelperService.PostAsync<BaseResponse>(ApiRoute.CreateProject, content);
                 if (result.Success)
                 {
-                    return RedirectToAction("Index", "Project");
+                    return RedirectToAction("ListView", "Project");
                 }
                 return BadRequest(result);
             }
             catch (Exception ex)
             {
-                return RedirectToAction("Index", "Project");
+                return RedirectToAction("ListView", "Project");
             }
            
         }
@@ -134,7 +140,7 @@ namespace Management.Controllers
             var content = new MultipartFormDataContent();
             AddCommonContentForUpdate(content, project);
             var result = await _apiHelperService.PostAsync<ProjectDto>(ApiRoute.UpdateProjectPost, content);
-            return RedirectToAction("Index");
+            return RedirectToAction("ListView");
         }
 
         [HttpGet]
@@ -145,7 +151,7 @@ namespace Management.Controllers
             if (result.Success)
             {
                 HttpContext.Session.Clear();
-                return RedirectToAction("Index");
+                return RedirectToAction("ListView");
             }
             return View();
         }
@@ -164,7 +170,7 @@ namespace Management.Controllers
                 HttpContext.Session.SetString("SearchResults", JsonConvert.SerializeObject(paginatedAllResults));
                 
 
-                return RedirectToAction("Index", new { page, sortField, sortOrder });
+                return RedirectToAction("ListView", new { page, sortField, sortOrder });
             }
 
             var result = await _apiHelperService.PostAsyncData<List<ProjectDto>>(ApiRoute.SearchByName, value);
@@ -172,9 +178,9 @@ namespace Management.Controllers
             {
                 var paginatedSearchResults = await SortProjects(result, sortField, sortOrder, page, pageSize);
                 HttpContext.Session.SetString("SearchResults", JsonConvert.SerializeObject(paginatedSearchResults));
-                return RedirectToAction("Index", new { page, sortField, sortOrder });
+                return RedirectToAction("ListView", new { page, sortField, sortOrder });
             }
-            return RedirectToAction("Index", result);
+            return RedirectToAction("ListView", result);
 
         }
 
@@ -309,6 +315,17 @@ namespace Management.Controllers
                 foreach (string path in deletedPaths)
                 {
                     content.Add(new StringContent(path), "DeletedDocuments");
+                }
+            }
+
+            if (project.DeletedLogo[0] is not null)
+            {
+                string deletedLogoString = project.DeletedLogo[0];
+                string[] deletedPaths = deletedLogoString.Split(',');
+
+                foreach (string path in deletedPaths)
+                {
+                    content.Add(new StringContent(path), "DeletedLogo");
                 }
             }
         }

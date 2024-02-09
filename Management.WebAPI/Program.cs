@@ -22,6 +22,11 @@ namespace Management.WebAPI
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowSpecific", p => p.WithOrigins("http://localhost"));
+            });
+
 
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
@@ -82,7 +87,7 @@ namespace Management.WebAPI
 
             builder.Services.AddSwaggerGen(option =>
             {
-                option.SwaggerDoc("v1", new OpenApiInfo { Title = "Core_Test", Version = "v1" });
+                option.SwaggerDoc("v1", new OpenApiInfo { Title = "Core", Version = "v1" });
                 option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     In = ParameterLocation.Header,
@@ -122,6 +127,7 @@ namespace Management.WebAPI
             app.UseSerilogRequestLogging();
             app.UseHttpsRedirection();
             app.UseAuthentication();
+            app.UseCors("AllowSpecific");
             app.UseAuthorization();
             app.UseStaticFiles();
 

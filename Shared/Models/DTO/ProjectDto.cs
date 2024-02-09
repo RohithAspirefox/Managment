@@ -50,6 +50,7 @@ namespace Management.Common.Models.DTO
         public string? ProductionUrl { get; set; }
         public List<string>? DeletedSnapShoots { get; set; }
         public List<string>? DeletedDocuments { get; set; }
+        public List<string>? DeletedLogo { get; set; }
     }
 
     public class TechStackDto

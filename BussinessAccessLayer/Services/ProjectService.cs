@@ -182,6 +182,13 @@ namespace Management.Services.Services
                         project.Documents.RemoveAll(x => string.Equals(x.FilePath, item));
                     }
                 }
+                if (entity?.DeletedLogo?.Any() ?? false)
+                {
+                    foreach (var item in entity.DeletedLogo)
+                    {
+                        project.Documents.RemoveAll(x => string.Equals(x.FilePath, item));
+                    }
+                }
 
                 if (entity.Logo != null)
                     await UpdateFileAsync(entity.Logo, localPath, project, DocumentType.Logo);

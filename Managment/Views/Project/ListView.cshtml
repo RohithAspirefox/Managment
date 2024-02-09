@@ -1,0 +1,89 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<h3>List of All The Projects Below</h3>
+
+<form asp-action="Search" method="get">
+    <div style="display:flex">
+        <h3><label for="searchInput">Search by Name:</label></h3>
+        <input style="width: 335px;margin-top: 15px;" class="form-control" type="text" id="searchInput" name="value" />
+        <button style="margin-left: 20px;height: 37px;margin-top:11px;" class="btn btn-primary" type="submit" id="searchButton">
+            Search
+        </button>
+    </div>
+</form>
+
+<br />
+<br />
+
+@model Management.Common.Models.DTO.PaginatedList<Management.Common.Models.DTO.ProjectDto>
+
+<a asp-action="Add" asp-controller="Project" class="btn btn-primary">Add Project</a>
+<br />
+<br />
+
+<table class="table" style="border-collapse: separate;border-spacing: 14px 8px;">
+    <thead>
+        <tr>
+            <th>Logo</th>
+            <th>
+                <span>Name</span>
+                <a asp-action="Index" asp-route-sortField="Name" asp-route-sortOrder="asc">▲</a>
+                <a asp-action="Index" asp-route-sortField="Name" asp-route-sortOrder="desc">▼</a>
+            </th>
+            <th>
+                <span>StartDate</span>
+                <a asp-action="Index" asp-route-sortField="StartDate" asp-route-sortOrder="asc">▲</a>
+                <a asp-action="Index" asp-route-sortField="StartDate" asp-route-sortOrder="desc">▼</a>
+            </th>
+            <th>
+                <span>Status</span>
+                <a asp-action="Index" asp-route-sortField="Status" asp-route-sortOrder="asc">▲</a>
+                <a asp-action="Index" asp-route-sortField="Status" asp-route-sortOrder="desc">▼</a>
+            </th>
+            <th>Action</th>
+    </thead>
+    <tbody>
+        @if (Model.Items.Any())
+        {
+            @foreach (var project in Model.Items)
+            {
+                <tr style="border-block: none;border-bottom: white;">
+                    <td><img src="@project.LogoUrl" width="100" height="100"></td>
+                    <td>@project.Name</td>
+                    <td>@project.StartDate.ToShortDateString()</td>
+                    <td>@project.Status</td>
+                    
+                    <td>
+                        <a style="margin-right: 6px" class="btn btn-primary" href="@Url.Action("Index", "Project", new { id = project.ProjectId })">
+                            Detail View</a>
+                    </td> 
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="13">No projects found.</td>
+            </tr>
+        }
+
+    </tbody>
+</table>
+
+<div>
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            @for (int i = 1; i <= (Model.TotalCount + Model.PageSize - 1) / Model.PageSize; i++)
+            {
+                <li class="page-item @(i == Model.PageIndex ? "active" : "")">
+                    <a class="page-link" href="@Url.Action("Index", new { page = i, sortField = ViewBag.SortField, sortOrder = ViewBag.SortOrder })">
+                        @i
+                    </a>
+                </li>
+            }
+        </ul>
+    </nav>
+</div>

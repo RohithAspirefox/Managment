@@ -27,11 +27,18 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
+                        @if (User.IsInRole("HR"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Project"
+                                   asp-action="ListView">Projects</a>
+                            </li>
+                        }
                     </ul>
                     <ul style="text-decoration:None">
                         @if (User.Identity.IsAuthenticated)
                         {
-                            <a class="nav-link text-dark" style="margin-left: 2103px" asp-area="" asp-controller="Account" asp-action="Logout">Logout</a>
+                            <a class="nav-link text-dark" style="margin-left: 95%" asp-area="" asp-controller="Account" asp-action="Logout">Logout</a>
                         }
                         else
                         {
@@ -60,6 +67,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.js"></script>
     <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    @* <script src="http://twitter.github.io/typeahead.js/releases/latest/typeahead.bundle.js"></script> *@
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.2/bootstrap3-typeahead.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
