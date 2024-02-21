@@ -112,7 +112,7 @@
                     <div class="card-body">
                         <li class="list-group-item">
                             <strong>Tech Stack Used:</strong>
-                            @foreach (var techStack in Model?.TechStackUsed)
+                            @foreach (var techStack in Model?.TechStackUsed?.FirstOrDefault()?.Split(","))
                             {
                                 <button class="button-2" role="button">
                                     @techStack
