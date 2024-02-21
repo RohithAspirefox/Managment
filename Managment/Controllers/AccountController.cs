@@ -116,9 +116,9 @@ namespace Management.Controllers
                     var result = await _apiHelperService.PostAsyncData<BaseResponse>(ApiRoute.ForgetPassword, forgotPasswordModel);
                     if (result.Success)
                         return RedirectToAction("ForgotPasswordConfirmation", "Account");
-                    ModelState.AddModelError(Constants.Empty, result.Error ?? Constants.ErrorMessage);
+                    ModelState.AddModelError(Constants.Empty, result.Error ?? Constants.DontExist);
                 }
-                ModelState.AddModelError(Constants.Empty, Constants.DataRequired);
+                //ModelState.AddModelError(Constants.Empty, Constants.DataRequired);
                 return View();
             }
             catch (Exception)
@@ -149,7 +149,7 @@ namespace Management.Controllers
                         return RedirectToAction("Login", "Account");
                     ModelState.AddModelError(Constants.Empty, result.Message ?? Constants.ErrorMessage);
                 }
-                ModelState.AddModelError(Constants.Empty, Constants.DataRequired);
+                //ModelState.AddModelError(Constants.Empty, Constants.DataRequired);
                 return View();
             }
             catch (Exception ex)

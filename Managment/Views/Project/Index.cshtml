@@ -7,7 +7,7 @@
     <script src="https://kit.fontawesome.com/0ace76c9cd.js" crossorigin="anonymous"></script>
 </head>
 
-<h3>Detail View of the Project</h3>
+<h1 style="margin-left: 301px">Detail View of the Project</h1>
 <br />
 
 @* <a asp-action="Add" asp-controller="Project" class="btn btn-primary">Add Project</a>
@@ -61,7 +61,7 @@
 @* @model Management.Common.Models.DTO.PaginatedList<Management.Common.Models.DTO.ProjectDto> *@
 @model Management.Common.Models.DTO.ProjectDto
 
-<div class="container-fluid">
+<div class="container-fluid" style="border: 2px solid #ccc;">
     <div>
         @if (Model != null)
         {
@@ -101,7 +101,9 @@
                                 <br />
                                 @foreach (var snapshot in Model.SnapShootsUrl)
                                 {
-                                    <img src="@snapshot" class="img-thumbnail custom-snapshot-img" alt="Snapshot">
+                                     <a href="@snapshot" target="_blank">
+                                        <img src="@snapshot" class="img-thumbnail custom-snapshot-img" alt="Snapshot">
+                                    </a>
                                 }
                             </li>
                         </ul>

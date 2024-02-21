@@ -38,11 +38,11 @@
                     <ul style="text-decoration:None">
                         @if (User.Identity.IsAuthenticated)
                         {
-                            <a class="nav-link text-dark" style="margin-left: 95%" asp-area="" asp-controller="Account" asp-action="Logout">Logout</a>
+                            <a class="nav-link text-dark" style="margin-left: 95%;font-size: 18px;" asp-area="" asp-controller="Account" asp-action="Logout">Logout</a>
                         }
                         else
                         {
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Login">Login</a>
+                            <a class="nav-link text-dark" style="margin-left: 95%;font-size: 18px;" asp-area="" asp-controller="Account" asp-action="Login">Login</a>
 
                         }
                     </ul>

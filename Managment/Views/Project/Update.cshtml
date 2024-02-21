@@ -25,11 +25,31 @@
 
 </head>
 
+<style>
+    .custom-snapshot-img {
+        width: 159.98px;
+        height: 94.21px;
+        // object-fit: cover;
+    }
+    .form-control {
+        width: 85% !important;
+    }
 
-<h1>Update Project here</h1>
+    .mult-select-tag {
+        width: 85% !important;
+    }
+
+    #txttags.bootstrap-tagsinput input {
+        width: 100%;
+    }
+
+</style>
+
+
+<h1 style="margin-left: 301px">Update Project here</h1>
 
 <div class="container-fluid" style="margin-top: 50px;">
-    <div class="container-fluid" style="border: 2px solid #ccc; padding: 20px; border-radius: 10px; background-color: #FFFDF9;">
+    <div class="container-fluid" style="border: 2px solid #ccc; padding: 20px; border-radius: 10px;">
         <form id="formData">
             <div class="col-md-12 mb-4" style="margin-top: 55px;">
                 <div class="row no-gutters" style="margin-top: -50px;margin-bottom: 40px;">
@@ -42,7 +62,9 @@
                             {
                                 <p>Selected Document:</p>
                                 <p>
-                                    <img target="_blank" src="@ViewBag.Logo" style=" height: 124px; width: 125px;">
+                                    <a href="@ViewBag.Logo" target="_blank">
+                                        <img class="img-thumbnail custom-snapshot-img" target="_blank" src="@ViewBag.Logo" style="           height: 124px; width: 125px;">
+                                    </a>
                                     <button type="button" class="close" aria-label="Close" onclick="deleteLogo('@ViewBag.Logo')">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
@@ -116,8 +138,9 @@
                             {
                                 <p>Selected Document:</p>
                                 <p>
-                                    
-                                    <img target="_blank" src="@Model.DocumentationUrl" style=" height: 124px; width: 125px;margin-top: 10px;">
+                                    <a href="@Model.DocumentationUrl" target="_blank">
+                                        <img class="img-thumbnail custom-snapshot-img" target="_blank" src="@Model.DocumentationUrl"          style=" height: 124px; width: 125px;margin-top: 10px;">
+                                    </a>
                                     <button type="button" class="close" aria-label="Close" onclick="deleteDocumentation('@Model.DocumentationUrl')">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
@@ -136,7 +159,9 @@
                                 foreach (var item in ViewBag.SnapShoot)
                                 {
                                     <div class="col-5">
-                                        <img target="_blank" src="@item" style=" height: 124px; width: 125px;">
+                                        <a href="@item" target="_blank">
+                                            <img class="img-thumbnail custom-snapshot-img" target="_blank" src="@item" style="                      height:124px; width: 125px;">
+                                        </a>
                                         <button type="button" class="close" aria-label="Close" onclick="deleteSnapShoot('@item')">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
@@ -207,9 +232,9 @@
 </script>
 
 <script>
-    debugger;
+
     document.getElementById("cancelBtn").addEventListener("click", function () {
-        debugger;
+
         window.location.href = "/Project/ListView";
     });
 
@@ -228,7 +253,7 @@
     var list = @Html.Raw(Json.Serialize(ViewBag.TechStackNames.Items));
     tagify.addTags(list);
     console.log(list + "list");
-    debugger;
+
 
     input.addEventListener('change', onChange)
 
@@ -253,7 +278,7 @@
 
 
     function deleteLogo(documentPath) {
-        debugger;
+
 
         deletedLogo.push(documentPath);
         $(`img[src='${documentPath}']`).closest('p').remove();
@@ -264,7 +289,7 @@
     }
 
     function deleteDocumentation(documentPath) {
-        debugger;
+
 
         deletedDocuments.push(documentPath);
         $(`img[src='${documentPath}']`).closest('p').remove();
@@ -278,7 +303,7 @@
         debugger;
 
         deletedSnapShoots.push(snapShootPath);
-        $(`img[src='${documentPath}']`).closest('p').remove();
+        $(`img[src='${snapShootPath}']`).closest('p').remove();
 
         existingSnapShoots.splice(existingSnapShoots.indexOf(snapShootPath), 1);
 
@@ -289,7 +314,7 @@
 
     $('#submitBtn').on('click', function (e) {
         const formData = new FormData(document.getElementById('formData')); // Get form data
-        debugger;
+
         var newFormData = new FormData();
 
         var ProjectId = document.getElementById("ProjectId").value;
@@ -342,7 +367,7 @@
         newFormData.append("DeletedLogo", deletedLogo);
         newFormData.append("Developers", Developers);
 
-        debugger;
+
 
         $.ajax({
             url: '/Project/UpdateProject',
@@ -352,7 +377,7 @@
             processData: false,
             success: function (data) {
                 console.log('Data submitted successfully!', data);
-                debugger;
+
                 setTimeout(() => {
                     var redirectUrl = "https://localhost:7222/Project/ListView";
                     window.location.href = redirectUrl;

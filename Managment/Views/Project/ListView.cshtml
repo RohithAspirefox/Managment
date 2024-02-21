@@ -24,24 +24,24 @@
 <br />
 <br />
 
-<table class="table" style="border-collapse: separate;border-spacing: 14px 8px;">
+<table class="table" style="border-collapse: separate;border-spacing: 14px 8px;border: 2px solid #ccc;">
     <thead>
         <tr>
             <th>Logo</th>
             <th>
                 <span>Name</span>
-                <a asp-action="Index" asp-route-sortField="Name" asp-route-sortOrder="asc">▲</a>
-                <a asp-action="Index" asp-route-sortField="Name" asp-route-sortOrder="desc">▼</a>
+                <a asp-action="ListView" asp-route-sortField="Name" asp-route-sortOrder="asc">▲</a>
+                <a asp-action="ListView" asp-route-sortField="Name" asp-route-sortOrder="desc">▼</a>
             </th>
             <th>
                 <span>StartDate</span>
-                <a asp-action="Index" asp-route-sortField="StartDate" asp-route-sortOrder="asc">▲</a>
-                <a asp-action="Index" asp-route-sortField="StartDate" asp-route-sortOrder="desc">▼</a>
+                <a asp-action="ListView" asp-route-sortField="StartDate" asp-route-sortOrder="asc">▲</a>
+                <a asp-action="ListView" asp-route-sortField="StartDate" asp-route-sortOrder="desc">▼</a>
             </th>
             <th>
                 <span>Status</span>
-                <a asp-action="Index" asp-route-sortField="Status" asp-route-sortOrder="asc">▲</a>
-                <a asp-action="Index" asp-route-sortField="Status" asp-route-sortOrder="desc">▼</a>
+                <a asp-action="ListView" asp-route-sortField="Status" asp-route-sortOrder="asc">▲</a>
+                <a asp-action="ListView" asp-route-sortField="Status" asp-route-sortOrder="desc">▼</a>
             </th>
             <th>Action</th>
     </thead>
