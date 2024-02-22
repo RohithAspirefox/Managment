@@ -158,14 +158,14 @@
 
                                 foreach (var item in ViewBag.SnapShoot)
                                 {
-                                    <div class="col-5">
+                                    <p>
                                         <a href="@item" target="_blank">
                                             <img class="img-thumbnail custom-snapshot-img" target="_blank" src="@item" style="                      height:124px; width: 125px;">
                                         </a>
                                         <button type="button" class="close" aria-label="Close" onclick="deleteSnapShoot('@item')">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
-                                    </div>
+                                    </p>
                                 }
 
                             }
